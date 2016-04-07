@@ -1,0 +1,63 @@
+options {
+	LOOKAHEAD=1;
+}
+
+PARSER_BEGIN(ParserNav)
+
+public class ParserNav
+{
+	public static void main(String args[]) throws ParseException {
+		ParserNav pNav = new ParserNav(System.in);
+		pNav.ParseExpression();
+		
+		System.out.println("Aceite");
+	}
+}
+
+PARSER_END(ParserNav)
+
+SKIP : {
+	" " | "\r" | "\t"
+}
+
+TOKEN : {
+	< NODE: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
+	|
+	< NL: "\n" >
+	|
+	< COMMA: "," >
+	|
+	< SRC: ( "s""r""c" ) >
+	|
+	< DEST: ( "d""e""s""t" ) >
+	|
+	< SHORTEST: ( "s""h""o""r""t""e""s""t" ) >
+	|
+	< NOT: ( "n""o""t" ) >
+	|
+	< PASS: ( "p""a""s""s" ) >
+}
+
+void ParseExpression(): {} {
+	Source() ( Path() | Find() ) <NL>
+}
+
+void Path(): {} {
+	DestStm() Criteria() Restrictions()
+}
+
+void DestStm(): {} {
+	<DEST> <NODE>
+}
+
+void Criteria(): {} {
+	<SHORTEST>
+}
+
+void Restrictions(): {} {
+	(<NOT>)? <PASS> Params()
+}
+
+void Params(): {} {
+	<NODE>(<COMMA> <NODE>)*
+}
