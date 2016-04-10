@@ -2,20 +2,28 @@
 public interface ParserNavTreeConstants
 {
   public int JJTPARSEEXPRESSION = 0;
-  public int JJTPATH = 1;
-  public int JJTDESTSTM = 2;
-  public int JJTCRITERIA = 3;
-  public int JJTRESTRICTIONS = 4;
-  public int JJTPARAMS = 5;
+  public int JJTSOURCE = 1;
+  public int JJTPATH = 2;
+  public int JJTDESTSTM = 3;
+  public int JJTCRITERIAPATH = 4;
+  public int JJTRESTRICTIONS = 5;
+  public int JJTPARAMS = 6;
+  public int JJTFIND = 7;
+  public int JJTCRITERIAFIND = 8;
+  public int JJTTOFIND = 9;
 
 
   public String[] jjtNodeName = {
     "ParseExpression",
+    "Source",
     "Path",
     "DestStm",
-    "Criteria",
+    "CriteriaPath",
     "Restrictions",
     "Params",
+    "Find",
+    "CriteriaFind",
+    "ToFind",
   };
 }
-/* JavaCC - OriginalChecksum=fb6e422e58e2e6794c708a0d2dcf6f0d (do not edit this line) */
+/* JavaCC - OriginalChecksum=714e6a3ef41f2ce2f6c1b2548da22d0f (do not edit this line) */

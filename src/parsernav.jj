@@ -11,6 +11,9 @@ public class ParserNav/*@bgen(jjtree)*/implements ParserNavTreeConstants/*@egen*
 
 /*@egen*/
 	public static void main(String args[]) throws ParseException {
+		System.out.println("Parser waiting");
+		System.out.print("String -> ");
+		
 		ParserNav pNav = new ParserNav(System.in);
 		pNav.ParseExpression();
 		
@@ -25,21 +28,25 @@ SKIP : {
 }
 
 TOKEN : {
-	< NODE: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
-	|
 	< NL: "\n" >
 	|
 	< COMMA: "," >
 	|
-	< SRC: ( "s""r""c" ) >
+	< SRC: ( "src" ) >
 	|
-	< DEST: ( "d""e""s""t" ) >
+	< DEST: ( "dest" ) >
 	|
-	< SHORTEST: ( "s""h""o""r""t""e""s""t" ) >
+	< SHORTEST: ( "shortest" ) >
 	|
-	< NOT: ( "n""o""t" ) >
+	< NOT: ( "not" ) >
 	|
-	< PASS: ( "p""a""s""s" ) >
+	< PASS: ( "pass" ) >
+	|
+	< HIGH: ( "high" ) >
+	|
+	< LOW: ( "low" ) >
+	|
+	< NODE: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
 }
 
 void ParseExpression(): {/*@bgen(jjtree) ParseExpression */
@@ -72,6 +79,22 @@ void ParseExpression(): {/*@bgen(jjtree) ParseExpression */
 /*@egen*/
 }
 
+void Source(): {/*@bgen(jjtree) Source */
+  SimpleNode jjtn000 = new SimpleNode(JJTSOURCE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) Source */
+        try {
+/*@egen*/
+	<SRC> <NODE>/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
 void Path(): {/*@bgen(jjtree) Path */
   SimpleNode jjtn000 = new SimpleNode(JJTPATH);
   boolean jjtc000 = true;
@@ -79,7 +102,7 @@ void Path(): {/*@bgen(jjtree) Path */
 /*@egen*/} {/*@bgen(jjtree) Path */
         try {
 /*@egen*/
-	DestStm() Criteria() Restrictions()/*@bgen(jjtree)*/
+	DestStm() CriteriaPath() (Restrictions())?/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -118,11 +141,11 @@ void DestStm(): {/*@bgen(jjtree) DestStm */
 /*@egen*/
 }
 
-void Criteria(): {/*@bgen(jjtree) Criteria */
-  SimpleNode jjtn000 = new SimpleNode(JJTCRITERIA);
+void CriteriaPath(): {/*@bgen(jjtree) CriteriaPath */
+  SimpleNode jjtn000 = new SimpleNode(JJTCRITERIAPATH);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/} {/*@bgen(jjtree) Criteria */
+/*@egen*/} {/*@bgen(jjtree) CriteriaPath */
         try {
 /*@egen*/
 	<SHORTEST>/*@bgen(jjtree)*/
@@ -172,6 +195,68 @@ void Params(): {/*@bgen(jjtree) Params */
         try {
 /*@egen*/
 	<NODE>(<COMMA> <NODE>)*/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void Find(): {/*@bgen(jjtree) Find */
+  SimpleNode jjtn000 = new SimpleNode(JJTFIND);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) Find */
+        try {
+/*@egen*/
+	CriteriaFind() ToFind()/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void CriteriaFind(): {/*@bgen(jjtree) CriteriaFind */
+  SimpleNode jjtn000 = new SimpleNode(JJTCRITERIAFIND);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) CriteriaFind */
+        try {
+/*@egen*/
+	<SHORTEST>/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void ToFind(): {/*@bgen(jjtree) ToFind */
+  SimpleNode jjtn000 = new SimpleNode(JJTTOFIND);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) ToFind */
+        try {
+/*@egen*/
+	<HIGH> | <LOW>/*@bgen(jjtree)*/
         } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);

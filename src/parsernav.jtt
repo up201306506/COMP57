@@ -7,6 +7,9 @@ PARSER_BEGIN(ParserNav)
 public class ParserNav
 {
 	public static void main(String args[]) throws ParseException {
+		System.out.println("Parser waiting");
+		System.out.print("String -> ");
+		
 		ParserNav pNav = new ParserNav(System.in);
 		pNav.ParseExpression();
 		
@@ -21,36 +24,44 @@ SKIP : {
 }
 
 TOKEN : {
-	< NODE: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
-	|
 	< NL: "\n" >
 	|
 	< COMMA: "," >
 	|
-	< SRC: ( "s""r""c" ) >
+	< SRC: ( "src" ) >
 	|
-	< DEST: ( "d""e""s""t" ) >
+	< DEST: ( "dest" ) >
 	|
-	< SHORTEST: ( "s""h""o""r""t""e""s""t" ) >
+	< SHORTEST: ( "shortest" ) >
 	|
-	< NOT: ( "n""o""t" ) >
+	< NOT: ( "not" ) >
 	|
-	< PASS: ( "p""a""s""s" ) >
+	< PASS: ( "pass" ) >
+	|
+	< HIGH: ( "high" ) >
+	|
+	< LOW: ( "low" ) >
+	|
+	< NODE: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
 }
 
 void ParseExpression(): {} {
 	Source() ( Path() | Find() ) <NL>
 }
 
+void Source(): {} {
+	<SRC> <NODE>
+}
+
 void Path(): {} {
-	DestStm() Criteria() Restrictions()
+	DestStm() CriteriaPath() (Restrictions())?
 }
 
 void DestStm(): {} {
 	<DEST> <NODE>
 }
 
-void Criteria(): {} {
+void CriteriaPath(): {} {
 	<SHORTEST>
 }
 
@@ -60,4 +71,16 @@ void Restrictions(): {} {
 
 void Params(): {} {
 	<NODE>(<COMMA> <NODE>)*
+}
+
+void Find(): {} {
+	CriteriaFind() ToFind()
+}
+
+void CriteriaFind(): {} {
+	<SHORTEST>
+}
+
+void ToFind(): {} {
+	<HIGH> | <LOW>
 }
