@@ -27,7 +27,13 @@ public interface ParserNavConstants {
   /** RegularExpression Id. */
   int LOW = 12;
   /** RegularExpression Id. */
-  int NODE = 13;
+  int WALK = 13;
+  /** RegularExpression Id. */
+  int SIMPLECYCLE = 14;
+  /** RegularExpression Id. */
+  int INT = 15;
+  /** RegularExpression Id. */
+  int NODE = 16;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -47,6 +53,9 @@ public interface ParserNavConstants {
     "\"pass\"",
     "\"high\"",
     "\"low\"",
+    "\"walk\"",
+    "\"simplecycle\"",
+    "<INT>",
     "<NODE>",
   };
 

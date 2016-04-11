@@ -9,10 +9,10 @@ public class ParserNav
 	public static void main(String args[]) throws ParseException {
 		System.out.println("Parser waiting");
 		System.out.print("String -> ");
-		
+
 		ParserNav pNav = new ParserNav(System.in);
 		pNav.ParseExpression();
-		
+
 		System.out.println("Aceite");
 	}
 }
@@ -42,11 +42,17 @@ TOKEN : {
 	|
 	< LOW: ( "low" ) >
 	|
+	< WALK: ( "walk" ) >
+	|
+	< SIMPLECYCLE: ( "simplecycle" ) >
+	|
+	< INT: (["0"-"9"])+>
+	|
 	< NODE: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
 }
 
 void ParseExpression(): {} {
-	Source() ( Path() | Find() ) <NL>
+	Source() ( Path() | Find() | Cycle() ) <NL>
 }
 
 void Source(): {} {
@@ -83,4 +89,8 @@ void CriteriaFind(): {} {
 
 void ToFind(): {} {
 	<HIGH> | <LOW>
+}
+
+void Cycle(): {} {
+	(<WALK> | <SIMPLECYCLE>) <INT> (Restrictions())?
 }

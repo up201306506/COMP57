@@ -13,10 +13,10 @@ public class ParserNav/*@bgen(jjtree)*/implements ParserNavTreeConstants/*@egen*
 	public static void main(String args[]) throws ParseException {
 		System.out.println("Parser waiting");
 		System.out.print("String -> ");
-		
+
 		ParserNav pNav = new ParserNav(System.in);
 		pNav.ParseExpression();
-		
+
 		System.out.println("Aceite");
 	}
 }
@@ -46,6 +46,12 @@ TOKEN : {
 	|
 	< LOW: ( "low" ) >
 	|
+	< WALK: ( "walk" ) >
+	|
+	< SIMPLECYCLE: ( "simplecycle" ) >
+	|
+	< INT: (["0"-"9"])+>
+	|
 	< NODE: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
 }
 
@@ -56,7 +62,7 @@ void ParseExpression(): {/*@bgen(jjtree) ParseExpression */
 /*@egen*/} {/*@bgen(jjtree) ParseExpression */
         try {
 /*@egen*/
-	Source() ( Path() | Find() ) <NL>/*@bgen(jjtree)*/
+	Source() ( Path() | Find() | Cycle() ) <NL>/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -257,6 +263,36 @@ void ToFind(): {/*@bgen(jjtree) ToFind */
         try {
 /*@egen*/
 	<HIGH> | <LOW>/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void Cycle(): {/*@bgen(jjtree) Cycle */
+  SimpleNode jjtn000 = new SimpleNode(JJTCYCLE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) Cycle */
+        try {
+/*@egen*/
+	(<WALK> | <SIMPLECYCLE>) <INT> (Restrictions())?/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
         } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);

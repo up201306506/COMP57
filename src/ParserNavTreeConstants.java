@@ -11,6 +11,7 @@ public interface ParserNavTreeConstants
   public int JJTFIND = 7;
   public int JJTCRITERIAFIND = 8;
   public int JJTTOFIND = 9;
+  public int JJTCYCLE = 10;
 
 
   public String[] jjtNodeName = {
@@ -24,6 +25,7 @@ public interface ParserNavTreeConstants
     "Find",
     "CriteriaFind",
     "ToFind",
+    "Cycle",
   };
 }
-/* JavaCC - OriginalChecksum=714e6a3ef41f2ce2f6c1b2548da22d0f (do not edit this line) */
+/* JavaCC - OriginalChecksum=f22b080177d082807616a8f6b6e91081 (do not edit this line) */
