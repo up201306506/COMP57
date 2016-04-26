@@ -28,31 +28,39 @@ SKIP : {
 }
 
 TOKEN : {
-	< NL: "\n" >
-	|
-	< COMMA: "," >
-	|
 	< SRC: ( "src" ) >
 	|
 	< DEST: ( "dest" ) >
 	|
-	< SHORTEST: ( "shortest" ) >
+	< FIND: ( "find" ) >
+	|
+	< CYCLE: ( "cycle" ) >
+	|
+	< SIMPLECYCLE: ( "simplecycle" ) >
+	|
+	< NL: "\n" >
+	|
+	< COMMA: "," >
 	|
 	< NOT: ( "not" ) >
 	|
 	< PASS: ( "pass" ) >
 	|
-	< HIGH: ( "high" ) >
+	< LENGTH: ( "length" ) >
 	|
-	< LOW: ( "low" ) >
+	< SHORTEST: ( "shortest" ) >
 	|
-	< WALK: ( "walk" ) >
+	< CHEAPEST: ( "cheapest" ) >
 	|
-	< SIMPLECYCLE: ( "simplecycle" ) >
+	< FASTEST: ( "fastest" ) >
+	|
+	< NEAREST: ( "nearest" ) >
+	|
+	< NODE: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
 	|
 	< INT: (["0"-"9"])+>
 	|
-	< NODE: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
+	< PROPRIETY: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
 }
 
 void ParseExpression(): {/*@bgen(jjtree) ParseExpression */
@@ -62,7 +70,7 @@ void ParseExpression(): {/*@bgen(jjtree) ParseExpression */
 /*@egen*/} {/*@bgen(jjtree) ParseExpression */
         try {
 /*@egen*/
-	Source() ( Path() | Find() | Cycle() ) <NL>/*@bgen(jjtree)*/
+	StartNode() ( Path() | Find() | Cycle() | SimpleCycle() ) <NL>/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -85,11 +93,11 @@ void ParseExpression(): {/*@bgen(jjtree) ParseExpression */
 /*@egen*/
 }
 
-void Source(): {/*@bgen(jjtree) Source */
-  SimpleNode jjtn000 = new SimpleNode(JJTSOURCE);
+void StartNode(): {/*@bgen(jjtree) StartNode */
+  SimpleNode jjtn000 = new SimpleNode(JJTSTARTNODE);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/} {/*@bgen(jjtree) Source */
+/*@egen*/} {/*@bgen(jjtree) StartNode */
         try {
 /*@egen*/
 	<SRC> <NODE>/*@bgen(jjtree)*/
@@ -108,7 +116,7 @@ void Path(): {/*@bgen(jjtree) Path */
 /*@egen*/} {/*@bgen(jjtree) Path */
         try {
 /*@egen*/
-	DestStm() CriteriaPath() (Restrictions())?/*@bgen(jjtree)*/
+	DestNode() Criteria() (Amount())? (RestrictionPath())?/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -131,11 +139,11 @@ void Path(): {/*@bgen(jjtree) Path */
 /*@egen*/
 }
 
-void DestStm(): {/*@bgen(jjtree) DestStm */
-  SimpleNode jjtn000 = new SimpleNode(JJTDESTSTM);
+void DestNode(): {/*@bgen(jjtree) DestNode */
+  SimpleNode jjtn000 = new SimpleNode(JJTDESTNODE);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/} {/*@bgen(jjtree) DestStm */
+/*@egen*/} {/*@bgen(jjtree) DestNode */
         try {
 /*@egen*/
 	<DEST> <NODE>/*@bgen(jjtree)*/
@@ -147,30 +155,14 @@ void DestStm(): {/*@bgen(jjtree) DestStm */
 /*@egen*/
 }
 
-void CriteriaPath(): {/*@bgen(jjtree) CriteriaPath */
-  SimpleNode jjtn000 = new SimpleNode(JJTCRITERIAPATH);
+void RestrictionPath(): {/*@bgen(jjtree) RestrictionPath */
+  SimpleNode jjtn000 = new SimpleNode(JJTRESTRICTIONPATH);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/} {/*@bgen(jjtree) CriteriaPath */
+/*@egen*/} {/*@bgen(jjtree) RestrictionPath */
         try {
 /*@egen*/
-	<SHORTEST>/*@bgen(jjtree)*/
-        } finally {
-          if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000, true);
-          }
-        }
-/*@egen*/
-}
-
-void Restrictions(): {/*@bgen(jjtree) Restrictions */
-  SimpleNode jjtn000 = new SimpleNode(JJTRESTRICTIONS);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/} {/*@bgen(jjtree) Restrictions */
-        try {
-/*@egen*/
-	(<NOT>)? <PASS> Params()/*@bgen(jjtree)*/
+	(<NOT>)? <PASS> RestrictionPathParam()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -193,14 +185,16 @@ void Restrictions(): {/*@bgen(jjtree) Restrictions */
 /*@egen*/
 }
 
-void Params(): {/*@bgen(jjtree) Params */
-  SimpleNode jjtn000 = new SimpleNode(JJTPARAMS);
+void RestrictionPathParam(): {/*@bgen(jjtree) RestrictionPathParam */
+  SimpleNode jjtn000 = new SimpleNode(JJTRESTRICTIONPATHPARAM);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/} {/*@bgen(jjtree) Params */
+/*@egen*/} {/*@bgen(jjtree) RestrictionPathParam */
         try {
 /*@egen*/
-	<NODE>(<COMMA> <NODE>)*/*@bgen(jjtree)*/
+	<NODE> (<COMMA> <NODE>)*
+	|
+	<PROPRIETY>/*@bgen(jjtree)*/
         } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);
@@ -216,7 +210,7 @@ void Find(): {/*@bgen(jjtree) Find */
 /*@egen*/} {/*@bgen(jjtree) Find */
         try {
 /*@egen*/
-	CriteriaFind() ToFind()/*@bgen(jjtree)*/
+	<FIND> Criteria()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -231,38 +225,6 @@ void Find(): {/*@bgen(jjtree) Find */
             throw (ParseException)jjte000;
           }
           throw (Error)jjte000;
-        } finally {
-          if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000, true);
-          }
-        }
-/*@egen*/
-}
-
-void CriteriaFind(): {/*@bgen(jjtree) CriteriaFind */
-  SimpleNode jjtn000 = new SimpleNode(JJTCRITERIAFIND);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/} {/*@bgen(jjtree) CriteriaFind */
-        try {
-/*@egen*/
-	<SHORTEST>/*@bgen(jjtree)*/
-        } finally {
-          if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000, true);
-          }
-        }
-/*@egen*/
-}
-
-void ToFind(): {/*@bgen(jjtree) ToFind */
-  SimpleNode jjtn000 = new SimpleNode(JJTTOFIND);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/} {/*@bgen(jjtree) ToFind */
-        try {
-/*@egen*/
-	<HIGH> | <LOW>/*@bgen(jjtree)*/
         } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);
@@ -278,7 +240,7 @@ void Cycle(): {/*@bgen(jjtree) Cycle */
 /*@egen*/} {/*@bgen(jjtree) Cycle */
         try {
 /*@egen*/
-	(<WALK> | <SIMPLECYCLE>) <INT> (Restrictions())?/*@bgen(jjtree)*/
+	<CYCLE> CycleCriteria()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -293,6 +255,120 @@ void Cycle(): {/*@bgen(jjtree) Cycle */
             throw (ParseException)jjte000;
           }
           throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void SimpleCycle(): {/*@bgen(jjtree) SimpleCycle */
+  SimpleNode jjtn000 = new SimpleNode(JJTSIMPLECYCLE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) SimpleCycle */
+        try {
+/*@egen*/
+	<SIMPLECYCLE> CycleCriteria()/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void CycleCriteria(): {/*@bgen(jjtree) CycleCriteria */
+  SimpleNode jjtn000 = new SimpleNode(JJTCYCLECRITERIA);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) CycleCriteria */
+        try {
+/*@egen*/
+	Length() Criteria()/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void Length(): {/*@bgen(jjtree) Length */
+  SimpleNode jjtn000 = new SimpleNode(JJTLENGTH);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) Length */
+        try {
+/*@egen*/
+	<LENGTH> <INT>/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void Criteria(): {/*@bgen(jjtree) Criteria */
+  SimpleNode jjtn000 = new SimpleNode(JJTCRITERIA);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) Criteria */
+        try {
+/*@egen*/
+	<SHORTEST>
+	|
+	<CHEAPEST>
+	|
+	<FASTEST>
+	|
+	<NEAREST>/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void Amount(): {/*@bgen(jjtree) Amount */
+  SimpleNode jjtn000 = new SimpleNode(JJTAMOUNT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) Amount */
+        try {
+/*@egen*/
+	<INT>/*@bgen(jjtree)*/
         } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);

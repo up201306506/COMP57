@@ -9,31 +9,39 @@ public interface ParserNavConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int NL = 4;
+  int SRC = 4;
   /** RegularExpression Id. */
-  int COMMA = 5;
+  int DEST = 5;
   /** RegularExpression Id. */
-  int SRC = 6;
+  int FIND = 6;
   /** RegularExpression Id. */
-  int DEST = 7;
+  int CYCLE = 7;
   /** RegularExpression Id. */
-  int SHORTEST = 8;
+  int SIMPLECYCLE = 8;
   /** RegularExpression Id. */
-  int NOT = 9;
+  int NL = 9;
   /** RegularExpression Id. */
-  int PASS = 10;
+  int COMMA = 10;
   /** RegularExpression Id. */
-  int HIGH = 11;
+  int NOT = 11;
   /** RegularExpression Id. */
-  int LOW = 12;
+  int PASS = 12;
   /** RegularExpression Id. */
-  int WALK = 13;
+  int LENGTH = 13;
   /** RegularExpression Id. */
-  int SIMPLECYCLE = 14;
+  int SHORTEST = 14;
   /** RegularExpression Id. */
-  int INT = 15;
+  int CHEAPEST = 15;
   /** RegularExpression Id. */
-  int NODE = 16;
+  int FASTEST = 16;
+  /** RegularExpression Id. */
+  int NEAREST = 17;
+  /** RegularExpression Id. */
+  int NODE = 18;
+  /** RegularExpression Id. */
+  int INT = 19;
+  /** RegularExpression Id. */
+  int PROPRIETY = 20;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -44,19 +52,23 @@ public interface ParserNavConstants {
     "\" \"",
     "\"\\r\"",
     "\"\\t\"",
-    "\"\\n\"",
-    "\",\"",
     "\"src\"",
     "\"dest\"",
-    "\"shortest\"",
+    "\"find\"",
+    "\"cycle\"",
+    "\"simplecycle\"",
+    "\"\\n\"",
+    "\",\"",
     "\"not\"",
     "\"pass\"",
-    "\"high\"",
-    "\"low\"",
-    "\"walk\"",
-    "\"simplecycle\"",
-    "<INT>",
+    "\"length\"",
+    "\"shortest\"",
+    "\"cheapest\"",
+    "\"fastest\"",
+    "\"nearest\"",
     "<NODE>",
+    "<INT>",
+    "<PROPRIETY>",
   };
 
 }

@@ -2,30 +2,34 @@
 public interface ParserNavTreeConstants
 {
   public int JJTPARSEEXPRESSION = 0;
-  public int JJTSOURCE = 1;
+  public int JJTSTARTNODE = 1;
   public int JJTPATH = 2;
-  public int JJTDESTSTM = 3;
-  public int JJTCRITERIAPATH = 4;
-  public int JJTRESTRICTIONS = 5;
-  public int JJTPARAMS = 6;
-  public int JJTFIND = 7;
-  public int JJTCRITERIAFIND = 8;
-  public int JJTTOFIND = 9;
-  public int JJTCYCLE = 10;
+  public int JJTDESTNODE = 3;
+  public int JJTRESTRICTIONPATH = 4;
+  public int JJTRESTRICTIONPATHPARAM = 5;
+  public int JJTFIND = 6;
+  public int JJTCYCLE = 7;
+  public int JJTSIMPLECYCLE = 8;
+  public int JJTCYCLECRITERIA = 9;
+  public int JJTLENGTH = 10;
+  public int JJTCRITERIA = 11;
+  public int JJTAMOUNT = 12;
 
 
   public String[] jjtNodeName = {
     "ParseExpression",
-    "Source",
+    "StartNode",
     "Path",
-    "DestStm",
-    "CriteriaPath",
-    "Restrictions",
-    "Params",
+    "DestNode",
+    "RestrictionPath",
+    "RestrictionPathParam",
     "Find",
-    "CriteriaFind",
-    "ToFind",
     "Cycle",
+    "SimpleCycle",
+    "CycleCriteria",
+    "Length",
+    "Criteria",
+    "Amount",
   };
 }
-/* JavaCC - OriginalChecksum=f22b080177d082807616a8f6b6e91081 (do not edit this line) */
+/* JavaCC - OriginalChecksum=1e458e11d5f5b3577add407c583da13f (do not edit this line) */

@@ -24,73 +24,97 @@ SKIP : {
 }
 
 TOKEN : {
-	< NL: "\n" >
-	|
-	< COMMA: "," >
-	|
 	< SRC: ( "src" ) >
 	|
 	< DEST: ( "dest" ) >
 	|
-	< SHORTEST: ( "shortest" ) >
+	< FIND: ( "find" ) >
+	|
+	< CYCLE: ( "cycle" ) >
+	|
+	< SIMPLECYCLE: ( "simplecycle" ) >
+	|
+	< NL: "\n" >
+	|
+	< COMMA: "," >
 	|
 	< NOT: ( "not" ) >
 	|
 	< PASS: ( "pass" ) >
 	|
-	< HIGH: ( "high" ) >
+	< LENGTH: ( "length" ) >
 	|
-	< LOW: ( "low" ) >
+	< SHORTEST: ( "shortest" ) >
 	|
-	< WALK: ( "walk" ) >
+	< CHEAPEST: ( "cheapest" ) >
 	|
-	< SIMPLECYCLE: ( "simplecycle" ) >
+	< FASTEST: ( "fastest" ) >
+	|
+	< NEAREST: ( "nearest" ) >
+	|
+	< NODE: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
 	|
 	< INT: (["0"-"9"])+>
 	|
-	< NODE: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
+	< PROPRIETY: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
 }
 
 void ParseExpression(): {} {
-	Source() ( Path() | Find() | Cycle() ) <NL>
+	StartNode() ( Path() | Find() | Cycle() | SimpleCycle() ) <NL>
 }
 
-void Source(): {} {
+void StartNode(): {} {
 	<SRC> <NODE>
 }
 
 void Path(): {} {
-	DestStm() CriteriaPath() (Restrictions())?
+	DestNode() Criteria() (Amount())? (RestrictionPath())?
 }
 
-void DestStm(): {} {
+void DestNode(): {} {
 	<DEST> <NODE>
 }
 
-void CriteriaPath(): {} {
-	<SHORTEST>
+void RestrictionPath(): {} {
+	(<NOT>)? <PASS> RestrictionPathParam()
 }
 
-void Restrictions(): {} {
-	(<NOT>)? <PASS> Params()
-}
-
-void Params(): {} {
-	<NODE>(<COMMA> <NODE>)*
+void RestrictionPathParam(): {} {
+	<NODE> (<COMMA> <NODE>)*
+	|
+	<PROPRIETY>
 }
 
 void Find(): {} {
-	CriteriaFind() ToFind()
-}
-
-void CriteriaFind(): {} {
-	<SHORTEST>
-}
-
-void ToFind(): {} {
-	<HIGH> | <LOW>
+	<FIND> Criteria()
 }
 
 void Cycle(): {} {
-	(<WALK> | <SIMPLECYCLE>) <INT> (Restrictions())?
+	<CYCLE> CycleCriteria()
+}
+
+void SimpleCycle(): {} {
+	<SIMPLECYCLE> CycleCriteria()
+}
+
+void CycleCriteria(): {} {
+	Length() Criteria()
+}
+
+void Length(): {} {
+	<LENGTH> <INT>
+}
+
+void Criteria(): {} {
+	<SHORTEST>
+	|
+	<CHEAPEST>
+	|
+	<FASTEST>
+	|
+	<NEAREST>
+}
+
+void Amount(): {} {
+	<INT>
 }
