@@ -7,13 +7,17 @@ PARSER_BEGIN(ParserNav)
 public class ParserNav
 {
 	public static void main(String args[]) throws ParseException {
-		System.out.println("Parser waiting");
-		System.out.print("String -> ");
+		System.out.println("\nParser waiting");
+		System.out.print("\nString -> ");
 
 		ParserNav pNav = new ParserNav(System.in);
-		pNav.ParseExpression();
-
-		System.out.println("Aceite");
+		SimpleNode root = pNav.ParseExpression();
+		
+		System.out.println(" --> Aceite\n\n");
+		
+		System.out.println("AST:\n");
+		root.dump("");
+		System.out.println("\n-----");
 	}
 }
 
@@ -59,53 +63,53 @@ TOKEN : {
 	< PROPRIETY: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
 }
 
-void ParseExpression(): {} {
-	StartNode() ( Path() | Find() | Cycle() | SimpleCycle() ) <NL>
+SimpleNode ParseExpression() #Parse: {} {
+	StartNode() ( Path() | Find() | Cycle() | SimpleCycle() ) <NL> {return jjtThis;}
 }
 
-void StartNode(): {} {
+void StartNode() #SourceNode: {} {
 	<SRC> <NODE>
 }
 
-void Path(): {} {
+void Path() #path: {} {
 	DestNode() Criteria() (Amount())? (RestrictionPath())?
 }
 
-void DestNode(): {} {
+void DestNode() #DestNode: {} {
 	<DEST> <NODE>
 }
 
-void RestrictionPath(): {} {
+void RestrictionPath() #restrictionpath: {} {
 	(<NOT>)? <PASS> RestrictionPathParam()
 }
 
-void RestrictionPathParam(): {} {
+void RestrictionPathParam() #restrictionpathparam: {} {
 	<NODE> (<COMMA> <NODE>)*
 	|
 	<PROPRIETY>
 }
 
-void Find(): {} {
+void Find() #find: {} {
 	<FIND> Criteria()
 }
 
-void Cycle(): {} {
+void Cycle() #cycle: {} {
 	<CYCLE> CycleCriteria()
 }
 
-void SimpleCycle(): {} {
+void SimpleCycle() #simplecycle: {} {
 	<SIMPLECYCLE> CycleCriteria()
 }
 
-void CycleCriteria(): {} {
+void CycleCriteria() #cyclecriteria: {} {
 	Length() Criteria()
 }
 
-void Length(): {} {
+void Length() #length: {} {
 	<LENGTH> <INT>
 }
 
-void Criteria(): {} {
+void Criteria() #criteria: {} {
 	<SHORTEST>
 	|
 	<CHEAPEST>
@@ -115,6 +119,6 @@ void Criteria(): {} {
 	<NEAREST>
 }
 
-void Amount(): {} {
+void Amount() #amount: {} {
 	<INT>
 }
