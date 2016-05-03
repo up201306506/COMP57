@@ -16,9 +16,9 @@ public class ParserNav/*@bgen(jjtree)*/implements ParserNavTreeConstants/*@egen*
 
 		ParserNav pNav = new ParserNav(System.in);
 		SimpleNode root = pNav.ParseExpression();
-		
+
 		System.out.println(" --> Aceite\n\n");
-		
+
 		System.out.println("AST:\n");
 		root.dump("");
 		System.out.println("\n-----");
@@ -32,6 +32,10 @@ SKIP : {
 }
 
 TOKEN : {
+	< DSLSTART: ("/**@navqdsl")>//("/**@navqdsl") >
+	|
+	< DSLEND: ("@navqdsl**/")>//("@navqdsl**/")
+	|
 	< SRC: ( "src" ) >
 	|
 	< DEST: ( "dest" ) >
@@ -67,18 +71,19 @@ TOKEN : {
 	< PROPRIETY: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
 }
 
-SimpleNode ParseExpression(): {/*@bgen(jjtree) ParseExpression */
-  SimpleNode jjtn000 = new SimpleNode(JJTPARSEEXPRESSION);
+SimpleNode ParseExpression()       : {/*@bgen(jjtree) Parse */
+  SimpleNode jjtn000 = new SimpleNode(JJTPARSE);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/} {/*@bgen(jjtree) ParseExpression */
+/*@egen*/} {/*@bgen(jjtree) Parse */
         try {
 /*@egen*/
-	StartNode() ( Path() | Find() | Cycle() | SimpleCycle() ) <NL>/*@bgen(jjtree)*/
-                                                                       {
-                                                                         jjtree.closeNodeScope(jjtn000, true);
-                                                                         jjtc000 = false;
-                                                                       }
+	Discard() <DSLSTART>StartNode() ( Path() | Find() | Cycle() | SimpleCycle() ) <DSLEND>
+	Discard() <NL>/*@bgen(jjtree)*/
+                       {
+                         jjtree.closeNodeScope(jjtn000, true);
+                         jjtc000 = false;
+                       }
 /*@egen*/ {return jjtn000;}/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
@@ -102,11 +107,15 @@ SimpleNode ParseExpression(): {/*@bgen(jjtree) ParseExpression */
 /*@egen*/
 }
 
-void StartNode()            : {/*@bgen(jjtree) sourcenode */
+void Discard()      : {} {
+	(<INT>|<NODE>)+
+}
+
+void StartNode()            : {/*@bgen(jjtree) SourceNode */
   SimpleNode jjtn000 = new SimpleNode(JJTSOURCENODE);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/} {/*@bgen(jjtree) sourcenode */
+/*@egen*/} {/*@bgen(jjtree) SourceNode */
         try {
 /*@egen*/
 	<SRC> <NODE>/*@bgen(jjtree)*/
@@ -148,11 +157,11 @@ void Path()      : {/*@bgen(jjtree) path */
 /*@egen*/
 }
 
-void DestNode()          : {/*@bgen(jjtree) destnode */
+void DestNode()          : {/*@bgen(jjtree) DestNode */
   SimpleNode jjtn000 = new SimpleNode(JJTDESTNODE);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/} {/*@bgen(jjtree) destnode */
+/*@egen*/} {/*@bgen(jjtree) DestNode */
         try {
 /*@egen*/
 	<DEST> <NODE>/*@bgen(jjtree)*/

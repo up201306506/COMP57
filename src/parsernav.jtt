@@ -12,9 +12,9 @@ public class ParserNav
 
 		ParserNav pNav = new ParserNav(System.in);
 		SimpleNode root = pNav.ParseExpression();
-		
+
 		System.out.println(" --> Aceite\n\n");
-		
+
 		System.out.println("AST:\n");
 		root.dump("");
 		System.out.println("\n-----");
@@ -28,6 +28,10 @@ SKIP : {
 }
 
 TOKEN : {
+	< DSLSTART: ("/**@navqdsl")>//("/**@navqdsl") >
+	|
+	< DSLEND: ("@navqdsl**/")>//("@navqdsl**/")
+	|
 	< SRC: ( "src" ) >
 	|
 	< DEST: ( "dest" ) >
@@ -64,7 +68,12 @@ TOKEN : {
 }
 
 SimpleNode ParseExpression() #Parse: {} {
-	StartNode() ( Path() | Find() | Cycle() | SimpleCycle() ) <NL> {return jjtThis;}
+	Discard() <DSLSTART>StartNode() ( Path() | Find() | Cycle() | SimpleCycle() ) <DSLEND>
+	Discard() <NL> {return jjtThis;}
+}
+
+void Discard() #void: {} {
+	(<INT>|<NODE>)+
 }
 
 void StartNode() #SourceNode: {} {

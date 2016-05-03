@@ -9,39 +9,43 @@ public interface ParserNavConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int SRC = 4;
+  int DSLSTART = 4;
   /** RegularExpression Id. */
-  int DEST = 5;
+  int DSLEND = 5;
   /** RegularExpression Id. */
-  int FIND = 6;
+  int SRC = 6;
   /** RegularExpression Id. */
-  int CYCLE = 7;
+  int DEST = 7;
   /** RegularExpression Id. */
-  int SIMPLECYCLE = 8;
+  int FIND = 8;
   /** RegularExpression Id. */
-  int NL = 9;
+  int CYCLE = 9;
   /** RegularExpression Id. */
-  int COMMA = 10;
+  int SIMPLECYCLE = 10;
   /** RegularExpression Id. */
-  int NOT = 11;
+  int NL = 11;
   /** RegularExpression Id. */
-  int PASS = 12;
+  int COMMA = 12;
   /** RegularExpression Id. */
-  int LENGTH = 13;
+  int NOT = 13;
   /** RegularExpression Id. */
-  int SHORTEST = 14;
+  int PASS = 14;
   /** RegularExpression Id. */
-  int CHEAPEST = 15;
+  int LENGTH = 15;
   /** RegularExpression Id. */
-  int FASTEST = 16;
+  int SHORTEST = 16;
   /** RegularExpression Id. */
-  int NEAREST = 17;
+  int CHEAPEST = 17;
   /** RegularExpression Id. */
-  int NODE = 18;
+  int FASTEST = 18;
   /** RegularExpression Id. */
-  int INT = 19;
+  int NEAREST = 19;
   /** RegularExpression Id. */
-  int PROPRIETY = 20;
+  int NODE = 20;
+  /** RegularExpression Id. */
+  int INT = 21;
+  /** RegularExpression Id. */
+  int PROPRIETY = 22;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -52,6 +56,8 @@ public interface ParserNavConstants {
     "\" \"",
     "\"\\r\"",
     "\"\\t\"",
+    "\"/**@navqdsl\"",
+    "\"@navqdsl**/\"",
     "\"src\"",
     "\"dest\"",
     "\"find\"",
