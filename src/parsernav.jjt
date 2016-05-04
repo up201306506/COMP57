@@ -1,0 +1,151 @@
+options {
+	LOOKAHEAD=1;
+	static=false;
+}
+
+PARSER_BEGIN(ParserNav)
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+public class ParserNav
+{
+	public static void main(String args[]) throws ParseException {
+		if(args.length==0) {
+			System.out.println("\nParser waiting");
+			System.out.print("\nString -> ");
+
+			ParserNav pNav = new ParserNav(System.in);
+			SimpleNode root = pNav.ParseExpression();
+
+			System.out.println(" --> Aceite\n\n");
+
+			System.out.println("AST:\n");
+			root.dump("");
+			System.out.println("\n-----");
+		}
+		else {
+			for(String s : args) {
+			  try			  {			    
+				BufferedReader rd=new BufferedReader(new FileReader(s));
+				ParserNav pNav = new ParserNav(rd);
+				SimpleNode root = pNav.ParseExpression();
+	
+				System.out.println("AST:\n");
+				root.dump("");
+				System.out.println("\n-----");
+				
+			  } catch(FileNotFoundException e)			  {
+			    System.out.println("File:"+s+" not found");
+			    continue;			  }
+			}
+		}
+	}
+}
+
+PARSER_END(ParserNav)
+
+SKIP : {
+	<"/*"> : DSL_MODE // TODO: move state change to token manager? how?
+	| <~[]>
+}
+
+<DSL_MODE> SKIP : {
+  <"*/"> : DEFAULT
+	| <" "> | <"\r"> | <"\t">
+}
+
+<DSL_MODE> TOKEN : {
+	< COMMA: "," >
+	|
+	< SRC: ( "src" ) >
+	|
+	< DEST: ( "dest" ) >
+	|
+	< FIND: ( "find" ) >
+	|
+	< CYCLE: ( "cycle" ) >
+	|
+	< SIMPLECYCLE: ( "simplecycle" ) >
+	|
+	< NOT: ( "not" ) >
+	|
+	< PASS: ( "pass" ) >
+	|
+	< LENGTH: ( "length" ) >
+	|
+	< SHORTEST: ( "shortest" ) >
+	|
+	< CHEAPEST: ( "cheapest" ) >
+	|
+	< FASTEST: ( "fastest" ) >
+	|
+	< NEAREST: ( "nearest" ) >
+	|
+	< NODE: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
+	|
+	< INT: (["0"-"9"])+>
+	|
+	< PROPERTY: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
+}
+
+SimpleNode ParseExpression() #Parse: {} {
+	 StartNode() ( Path() | Find() | Cycle() | SimpleCycle() )
+	 <EOF> {return jjtThis;}
+}
+
+void StartNode() #SourceNode: {} {
+	<SRC> <NODE>
+}
+
+void Path() #path: {} {
+	DestNode() Criteria() (Amount())? (RestrictionPath())?
+}
+
+void DestNode() #DestNode: {} {
+	<DEST> <NODE>
+}
+
+void RestrictionPath() #restrictionpath: {} {
+	(<NOT>)? <PASS> RestrictionPathParam()
+}
+
+void RestrictionPathParam() #restrictionpathparam: {} {
+	<NODE> (<COMMA> <NODE>)*
+	|
+	<PROPERTY>
+}
+
+void Find() #find: {} {
+	<FIND> Criteria()
+}
+
+void Cycle() #cycle: {} {
+	<CYCLE> CycleCriteria()
+}
+
+void SimpleCycle() #simplecycle: {} {
+	<SIMPLECYCLE> CycleCriteria()
+}
+
+void CycleCriteria() #cyclecriteria: {} {
+	Length() Criteria()
+}
+
+void Length() #length: {} {
+	<LENGTH> <INT>
+}
+
+void Criteria() #criteria: {} {
+	<SHORTEST>
+	|
+	<CHEAPEST>
+	|
+	<FASTEST>
+	|
+	<NEAREST>
+}
+
+void Amount() #amount: {} {
+	<INT>
+}
