@@ -1,1 +1,0 @@
-jjtree ./parsernav.jtt &&javacc ./parsernav.jj && javac ./*.java
