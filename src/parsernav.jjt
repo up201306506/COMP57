@@ -8,8 +8,7 @@ PARSER_BEGIN(ParserNav)
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
-public class ParserNav
-{
+public class ParserNav{
 	public static void main(String args[]) throws ParseException {
 		if(args.length==0) {
 			System.out.println("\nParser waiting");
@@ -19,27 +18,35 @@ public class ParserNav
 			SimpleNode root = pNav.ParseExpression();
 
 			System.out.println(" --> Aceite\n\n");
+			System.out.println("\n-----");
 
 			System.out.println("AST:\n");
 			root.dump("");
 			System.out.println("\n-----");
-		}
-		else {
+		}else {
 			for(String s : args) {
-			  try			  {			    
+			  try{			    
 				BufferedReader rd=new BufferedReader(new FileReader(s));
 				ParserNav pNav = new ParserNav(rd);
 				SimpleNode root = pNav.ParseExpression();
 	
+				System.out.println("\n-----");
 				System.out.println("AST:\n");
 				root.dump("");
 				System.out.println("\n-----");
 				
-			  } catch(FileNotFoundException e)			  {
+			  } catch(FileNotFoundException e){
 			    System.out.println("File:"+s+" not found");
 			    continue;			  }
 			}
 		}
+	}
+	
+	public String generateCypherQuery(SimpleNode node, String oldQuery){
+		if(node.jjtGetNumChildren() == 0) // leaf node
+			return "";
+	
+		return "";
 	}
 }
 
@@ -47,12 +54,13 @@ PARSER_END(ParserNav)
 
 SKIP : {
 	<"/*"> : DSL_MODE // TODO: move state change to token manager? how?
-	| <~[]>
+	| <~[]> // ignores tokens
 }
 
 <DSL_MODE> SKIP : {
-  <"*/"> : DEFAULT
-	| <" "> | <"\r"> | <"\t">
+	<"*/"> : DEFAULT
+	|
+	<" "> | <"\r"> | <"\t">
 }
 
 <DSL_MODE> TOKEN : {
@@ -90,15 +98,15 @@ SKIP : {
 }
 
 SimpleNode ParseExpression() #Parse: {} {
-	 StartNode() ( Path() | Find() | Cycle() | SimpleCycle() )
-	 <EOF> {return jjtThis;}
+	StartNode() ( Path() | Find() | Cycle() | SimpleCycle() )
+	<EOF> {return jjtThis;}
 }
 
 void StartNode() #SourceNode: {} {
 	<SRC> <NODE>
 }
 
-void Path() #path: {} {
+void Path() #Path: {} {
 	DestNode() Criteria() (Amount())? (RestrictionPath())?
 }
 
@@ -106,38 +114,38 @@ void DestNode() #DestNode: {} {
 	<DEST> <NODE>
 }
 
-void RestrictionPath() #restrictionpath: {} {
+void RestrictionPath() #RestrictionPath: {} {
 	(<NOT>)? <PASS> RestrictionPathParam()
 }
 
-void RestrictionPathParam() #restrictionpathparam: {} {
+void RestrictionPathParam() #RestrictionPathParam: {} {
 	<NODE> (<COMMA> <NODE>)*
 	|
 	<PROPERTY>
 }
 
-void Find() #find: {} {
+void Find() #Find: {} {
 	<FIND> Criteria()
 }
 
-void Cycle() #cycle: {} {
+void Cycle() #Cycle: {} {
 	<CYCLE> CycleCriteria()
 }
 
-void SimpleCycle() #simplecycle: {} {
+void SimpleCycle() #SimpleCycle: {} {
 	<SIMPLECYCLE> CycleCriteria()
 }
 
-void CycleCriteria() #cyclecriteria: {} {
+void CycleCriteria() #CycleCriteria: {} {
 	Length() Criteria()
 }
 
-void Length() #length: {} {
+void Length() #Length: {} {
 	<LENGTH> <INT>
 }
 
-void Criteria() #criteria: {} {
-	<SHORTEST>
+void Criteria() #Criteria: {} {
+	<SHORTEST> #Shortest
 	|
 	<CHEAPEST>
 	|
@@ -146,6 +154,6 @@ void Criteria() #criteria: {} {
 	<NEAREST>
 }
 
-void Amount() #amount: {} {
+void Amount() #Amount: {} {
 	<INT>
 }
