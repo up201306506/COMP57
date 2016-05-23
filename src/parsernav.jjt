@@ -5,17 +5,18 @@ options {
 
 PARSER_BEGIN(ParserNav)
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.util.*;
 public class ParserNav{
+	
 	public static void main(String args[]) throws ParseException {
+		SimpleNode root = null;
 		if(args.length==0) {
 			System.out.println("\nParser waiting");
 			System.out.print("\nString -> ");
 
 			ParserNav pNav = new ParserNav(System.in);
-			SimpleNode root = pNav.ParseExpression();
+			root = pNav.ParseExpression();
 
 			System.out.println(" --> Aceite\n\n");
 			System.out.println("\n-----");
@@ -28,7 +29,7 @@ public class ParserNav{
 			  try{			    
 				BufferedReader rd=new BufferedReader(new FileReader(s));
 				ParserNav pNav = new ParserNav(rd);
-				SimpleNode root = pNav.ParseExpression();
+				root = pNav.ParseExpression();
 	
 				System.out.println("\n-----");
 				System.out.println("AST:\n");
@@ -40,13 +41,25 @@ public class ParserNav{
 			    continue;			  }
 			}
 		}
+		
+		if(root != null){
+			System.out.println("\n-----");
+			System.out.println("CypherQuerry:\n");
+			String str = generateCypherQuery(root);
+			System.out.println(str);
+			System.out.println("\n\n-----");
+		}
 	}
 	
-	public String generateCypherQuery(SimpleNode node, String oldQuery){
+	public static String generateCypherQuery(SimpleNode node){	
 		if(node.jjtGetNumChildren() == 0) // leaf node
-			return "";
-	
-		return "";
+			return (String) node.value;
+		
+		String holder = "";
+		for(int i = 0; i < node.jjtGetNumChildren(); i++)
+			holder += "||" + generateCypherQuery((SimpleNode) node.jjtGetChild(i));
+		
+		return holder;
 	}
 }
 
@@ -86,15 +99,15 @@ SKIP : {
 	|
 	< CHEAPEST: ( "cheapest" ) >
 	|
-	< FASTEST: ( "fastest" ) >
-	|
 	< NEAREST: ( "nearest" ) >
 	|
-	< NODE: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
+	< MAXIMIZE: ( "maximize" ) >
+	|
+	< MINIMIZE: ( "minimize" ) >
+	|
+	< VAR: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
 	|
 	< INT: (["0"-"9"])+>
-	|
-	< PROPERTY: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
 }
 
 SimpleNode ParseExpression() #Parse: {} {
@@ -102,30 +115,24 @@ SimpleNode ParseExpression() #Parse: {} {
 	<EOF> {return jjtThis;}
 }
 
-void StartNode() #SourceNode: {} {
-	<SRC> <NODE>
+void StartNode() #Source: {Token t;} {
+	<SRC> t=<VAR>{
+		jjtThis.value = t.image;
+	}
 }
 
-void Path() #Path: {} {
-	DestNode() Criteria() (Amount())? (RestrictionPath())?
+void DestNode() #Dest: {Token t;} {
+	<DEST> t=<VAR>{
+		jjtThis.value = t.image;
+	}
 }
 
-void DestNode() #DestNode: {} {
-	<DEST> <NODE>
-}
-
-void RestrictionPath() #RestrictionPath: {} {
-	(<NOT>)? <PASS> RestrictionPathParam()
-}
-
-void RestrictionPathParam() #RestrictionPathParam: {} {
-	<NODE> (<COMMA> <NODE>)*
-	|
-	<PROPERTY>
+void Path() #To: {} {
+	DestNode() PathCriteria()
 }
 
 void Find() #Find: {} {
-	<FIND> Criteria()
+	<FIND> FindCriteria()
 }
 
 void Cycle() #Cycle: {} {
@@ -136,24 +143,54 @@ void SimpleCycle() #SimpleCycle: {} {
 	<SIMPLECYCLE> CycleCriteria()
 }
 
+void PathCriteria() #Criteria: {} {
+	(GraphCriteria() |  OptimalCriteria()) (Amount())? (RestrictionPath())?
+}
+
+void FindCriteria() #FindCriteria: {} {
+	<NEAREST> (Amount())? (RestrictionPath())?
+}
+
 void CycleCriteria() #CycleCriteria: {} {
-	Length() Criteria()
+	Length() (  (GraphCriteria() |  OptimalCriteria()) (Amount())? (RestrictionPath())?  )?
 }
 
-void Length() #Length: {} {
-	<LENGTH> <INT>
-}
-
-void Criteria() #Criteria: {} {
+void GraphCriteria() #void: {} {
 	<SHORTEST> #Shortest
 	|
-	<CHEAPEST>
-	|
-	<FASTEST>
-	|
-	<NEAREST>
+	<CHEAPEST> #Cheapest
 }
 
-void Amount() #Amount: {} {
-	<INT>
+void OptimalCriteria() #void: {} {
+	<MAXIMIZE> #Maximize Property() 
+	|
+	<MINIMIZE> #Minimize Property() 
+}
+
+void RestrictionPath() #RestrictPath: {} {
+	(<NOT>)? <PASS> RestrictionPathParam()
+}
+
+void RestrictionPathParam() #Restriction: {Token t;} {
+	t=<VAR> {
+		jjtThis.value = t.image;
+	}(<COMMA> RestrictionPathParam())*
+}
+
+void Amount() #Amount: {Token t;} {
+	t=<INT> {
+		jjtThis.value = t.image;
+	}
+}
+
+void Property() #Property: {Token t;} {
+	t=<VAR> {
+		jjtThis.value = t.image;
+	}
+}
+
+void Length() #Length: {Token t;} {
+	<LENGTH> t=<INT> {
+		jjtThis.value = t.image;
+	}
 }
