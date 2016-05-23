@@ -86,8 +86,6 @@ SKIP : {
 	|
 	< CHEAPEST: ( "cheapest" ) >
 	|
-	< FASTEST: ( "fastest" ) >
-	|
 	< NEAREST: ( "nearest" ) >
 	|
 	< MAXIMIZE: ( "maximize" ) >
@@ -148,8 +146,6 @@ void GraphCriteria() #GraphCriteria: {} {
 	<SHORTEST> #Shortest
 	|
 	<CHEAPEST> #Cheapest
-	|
-	<FASTEST> #Fastest
 	
 }
 
