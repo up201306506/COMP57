@@ -90,6 +90,10 @@ SKIP : {
 	|
 	< NEAREST: ( "nearest" ) >
 	|
+	< MAXIMIZE: ( "maximize" ) >
+	|
+	< MINIMIZE: ( "minimize" ) >
+	|
 	< NODE: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
 	|
 	< INT: (["0"-"9"])+>
@@ -107,7 +111,7 @@ void StartNode() #SourceNode: {} {
 }
 
 void Path() #Path: {} {
-	DestNode() Criteria() (Amount())? (RestrictionPath())?
+	DestNode() PathCriteria()
 }
 
 void DestNode() #DestNode: {} {
@@ -125,7 +129,7 @@ void RestrictionPathParam() #RestrictionPathParam: {} {
 }
 
 void Find() #Find: {} {
-	<FIND> Criteria()
+	<FIND> FindCriteria()
 }
 
 void Cycle() #Cycle: {} {
@@ -136,15 +140,20 @@ void SimpleCycle() #SimpleCycle: {} {
 	<SIMPLECYCLE> CycleCriteria()
 }
 
-void CycleCriteria() #CycleCriteria: {} {
-	Length() Criteria()
-}
-
 void Length() #Length: {} {
 	<LENGTH> <INT>
 }
 
-void Criteria() #Criteria: {} {
+void PathCriteria() #PathCriteria: {} {
+	( 
+		GraphCriteria() (Amount())? (RestrictionPath())? 
+		|  
+		OptimalCriteria() (RestrictionPath())?
+	) 
+	
+}
+
+void FindCriteria() #FindCriteria: {} {
 	<SHORTEST> #Shortest
 	|
 	<CHEAPEST> #Cheapest
@@ -152,6 +161,24 @@ void Criteria() #Criteria: {} {
 	<FASTEST> #Fastest
 	|
 	<NEAREST> #Nearest
+}
+
+void CycleCriteria() #CycleCriteria: {} {
+	Length() GraphCriteria()
+}
+
+void GraphCriteria() #GraphCriteria: {} {
+	<SHORTEST> #Shortest
+	|
+	<CHEAPEST> #Cheapest
+	|
+	<FASTEST> #Fastest
+}
+
+void OptimalCriteria() #OptimalCriteria: {} {
+	<MAXIMIZE> #Maximize
+	|
+	<MINIMIZE> #Minimize
 }
 
 void Amount() #Amount: {} {
