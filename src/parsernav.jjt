@@ -125,7 +125,7 @@ void RestrictionPath() #RestrictionPath: {} {
 void RestrictionPathParam() #RestrictionPathParam: {} {
 	<NODE> (<COMMA> <NODE>)*
 	|
-	<PROPERTY>
+	<PROPERTY> #Property
 }
 
 void Find() #Find: {} {
@@ -145,11 +145,7 @@ void Length() #Length: {} {
 }
 
 void PathCriteria() #PathCriteria: {} {
-	( 
-		GraphCriteria() (Amount())? (RestrictionPath())? 
-		|  
-		OptimalCriteria() (RestrictionPath())?
-	) 
+	(GraphCriteria() |  OptimalCriteria() ) (Amount())? (RestrictionPath())?
 	
 }
 
@@ -176,9 +172,9 @@ void GraphCriteria() #GraphCriteria: {} {
 }
 
 void OptimalCriteria() #OptimalCriteria: {} {
-	<MAXIMIZE> #Maximize
+	<MAXIMIZE> #Maximize <PROPERTY> #Property
 	|
-	<MINIMIZE> #Minimize
+	<MINIMIZE> #Minimize <PROPERTY> #Property
 }
 
 void Amount() #Amount: {} {
