@@ -147,11 +147,11 @@ void Length() #Length: {} {
 void Criteria() #Criteria: {} {
 	<SHORTEST> #Shortest
 	|
-	<CHEAPEST>
+	<CHEAPEST> #Cheapest
 	|
-	<FASTEST>
+	<FASTEST> #Fastest
 	|
-	<NEAREST>
+	<NEAREST> #Nearest
 }
 
 void Amount() #Amount: {} {
