@@ -110,22 +110,12 @@ void StartNode() #SourceNode: {} {
 	<SRC> <NODE>
 }
 
-void Path() #Path: {} {
-	DestNode() PathCriteria()
-}
-
 void DestNode() #DestNode: {} {
 	<DEST> <NODE>
 }
 
-void RestrictionPath() #RestrictionPath: {} {
-	(<NOT>)? <PASS> RestrictionPathParam()
-}
-
-void RestrictionPathParam() #RestrictionPathParam: {} {
-	<NODE> (<COMMA> <NODE>)*
-	|
-	<PROPERTY> #Property
+void Path() #Path: {} {
+	DestNode() PathCriteria()
 }
 
 void Find() #Find: {} {
@@ -140,27 +130,18 @@ void SimpleCycle() #SimpleCycle: {} {
 	<SIMPLECYCLE> CycleCriteria()
 }
 
-void Length() #Length: {} {
-	<LENGTH> <INT>
-}
-
 void PathCriteria() #PathCriteria: {} {
-	(GraphCriteria() |  OptimalCriteria() ) (Amount())? (RestrictionPath())?
+	(GraphCriteria() |  OptimalCriteria()) (Amount())? (RestrictionPath())?
 	
 }
 
 void FindCriteria() #FindCriteria: {} {
-	<SHORTEST> #Shortest
-	|
-	<CHEAPEST> #Cheapest
-	|
-	<FASTEST> #Fastest
-	|
-	<NEAREST> #Nearest
+	<NEAREST> (Amount())? (RestrictionPath())?
+
 }
 
 void CycleCriteria() #CycleCriteria: {} {
-	Length() GraphCriteria()
+	Length() (  (GraphCriteria() |  OptimalCriteria()) (Amount())? (RestrictionPath())?  )?
 }
 
 void GraphCriteria() #GraphCriteria: {} {
@@ -169,14 +150,33 @@ void GraphCriteria() #GraphCriteria: {} {
 	<CHEAPEST> #Cheapest
 	|
 	<FASTEST> #Fastest
+	
 }
 
 void OptimalCriteria() #OptimalCriteria: {} {
-	<MAXIMIZE> #Maximize <PROPERTY> #Property
+	<MAXIMIZE> #Maximize Property() 
 	|
-	<MINIMIZE> #Minimize <PROPERTY> #Property
+	<MINIMIZE> #Minimize Property() 
+}
+
+void RestrictionPath() #RestrictionPath: {} {
+	(<NOT>)? <PASS> RestrictionPathParam()
+}
+
+void RestrictionPathParam() #RestrictionPathParam: {} {
+	<NODE> (<COMMA> <NODE>)*
+	|
+	Property() 
 }
 
 void Amount() #Amount: {} {
 	<INT>
+}
+
+void Property() #Property: {} {
+	<PROPERTY>
+}
+
+void Length() #Length: {} {
+	<LENGTH> <INT>
 }
