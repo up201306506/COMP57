@@ -1,196 +1,156 @@
 options {
 	LOOKAHEAD=1;
-	static=false;
 }
 
 PARSER_BEGIN(ParserNav)
 
 import java.io.*;
-import java.util.*;
-public class ParserNav{
+import java.util.*;
+
+public class ParserNav {
 	
-	public static void main(String args[]) throws ParseException {
-		SimpleNode root = null;
-		if(args.length==0) {
-			System.out.println("\nParser waiting");
-			System.out.print("\nString -> ");
-
-			ParserNav pNav = new ParserNav(System.in);
-			root = pNav.ParseExpression();
-
-			System.out.println(" --> Aceite\n\n");
-			System.out.println("\n-----");
-
-			System.out.println("AST:\n");
-			root.dump("");
-			System.out.println("\n-----");
-		}else {
-			for(String s : args) {
-			  try{			    
-				BufferedReader rd=new BufferedReader(new FileReader(s));
-				ParserNav pNav = new ParserNav(rd);
-				root = pNav.ParseExpression();
+	public static LinkedList<Path> querries = new LinkedList<Path>();
 	
-				System.out.println("\n-----");
-				System.out.println("AST:\n");
-				root.dump("");
-				System.out.println("\n-----");
-				
-			  } catch(FileNotFoundException e){
-			    System.out.println("File:"+s+" not found");
-			    continue;			  }
-			}
+	public static void main(String args[]) throws ParseException, FileNotFoundException {
+		
+		// checks args
+		if(args.length != 1){
+			System.out.println("Incorrect arguments, correct use:");
+			System.out.println("ParserNav <path of file to be compiled>");
+			System.exit(-1);
 		}
 		
-		if(root != null){
-			System.out.println("\n-----");
-			System.out.println("CypherQuerry:\n");
-			String str = generateCypherQuery(root);
-			System.out.println(str);
-			System.out.println("\n\n-----");
-		}
+		FileInputStream fis = new FileInputStream(new File(args[0]));
+		
+		ParserNav parserNav = new ParserNav(fis);
+		SimpleNode root = parserNav.ParseExpression();
+		
+		System.out.println("\n\nAST:\n");
+		root.dump("");
+		System.out.println("\n--------");
+		
+		exportToFile(args[0]);
 	}
 	
-	public static String generateCypherQuery(SimpleNode node){	
-		if(node.jjtGetNumChildren() == 0) // leaf node
-			return (String) node.value;
+	public static void exportToFile(String filePath){
+		System.out.println("Exporting To File");
 		
-		String holder = "";
-		for(int i = 0; i < node.jjtGetNumChildren(); i++)
-			holder += "||" + generateCypherQuery((SimpleNode) node.jjtGetChild(i));
+		int index = filePath.lastIndexOf(".");
+		String exportFile = filePath.substring(0, index);
+		exportFile += "_output";
+		exportFile += filePath.substring(index, filePath.length());
 		
-		return holder;
+		while(!querries.isEmpty()){
+			System.out.println((To) querries.remove());
+		}
 	}
 }
 
 PARSER_END(ParserNav)
 
-SKIP : {
-	<"/*"> : DSL_MODE // TODO: move state change to token manager? how?
-	| <~[]> // ignores tokens
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
 }
 
-<DSL_MODE> SKIP : {
-	<"*/"> : DEFAULT
-	|
-	<" "> | <"\r"> | <"\t">
-}
-
-<DSL_MODE> TOKEN : {
+TOKEN :
+{
 	< COMMA: "," >
-	|
-	< SRC: ( "src" ) >
-	|
-	< DEST: ( "dest" ) >
-	|
-	< FIND: ( "find" ) >
-	|
-	< CYCLE: ( "cycle" ) >
-	|
-	< SIMPLECYCLE: ( "simplecycle" ) >
-	|
-	< NOT: ( "not" ) >
-	|
-	< PASS: ( "pass" ) >
-	|
-	< LENGTH: ( "length" ) >
-	|
-	< SHORTEST: ( "shortest" ) >
-	|
-	< CHEAPEST: ( "cheapest" ) >
-	|
-	< NEAREST: ( "nearest" ) >
-	|
-	< MAXIMIZE: ( "maximize" ) >
-	|
-	< MINIMIZE: ( "minimize" ) >
-	|
-	< VAR: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
-	|
-	< INT: (["0"-"9"])+>
+|	< SEMICOLON: ( ";" ) >
+|	< SRC: ( "src" ) >
+|	< DEST: ( "dest" ) >
+|	< FIND: ( "find" ) >
+|	< CYCLE: ( "cycle" ) >
+|	< SIMPLECYCLE: ( "simplecycle" ) >
+|	< NOT: ( "not" ) >
+|	< PASS: ( "pass" ) >
+|	< LENGTH: ( "length" ) >
+|	< NEAREST: ( "nearest" ) >
+|	< MAXIMIZE: ( "maximize" ) >
+|	< MINIMIZE: ( "minimize" ) >
+|	< VAR: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
+|	< INT: (["0"-"9"])+>
 }
 
-SimpleNode ParseExpression() #Parse: {} {
-	StartNode() ( Path() | Find() | Cycle() | SimpleCycle() )
-	<EOF> {return jjtThis;}
-}
-
-void StartNode() #Source: {Token t;} {
-	<SRC> t=<VAR>{
-		jjtThis.value = t.image;
+SimpleNode ParseExpression() #Parse: {Path obj;} {
+	obj=StartNode() <SEMICOLON>
+	{
+		querries.add(obj);
+	}
+	( <EOF> | ParseExpression() )
+	{
+		return jjtThis;
 	}
 }
 
-void DestNode() #Dest: {Token t;} {
-	<DEST> t=<VAR>{
-		jjtThis.value = t.image;
+Path StartNode() #void: {Token t; Path obj;} {
+	<SRC> t=<VAR>
+	obj=Path(t)
+	{
+		return obj;
 	}
 }
 
-void Path() #To: {} {
-	DestNode() PathCriteria()
-}
-
-void Find() #Find: {} {
-	<FIND> FindCriteria()
-}
-
-void Cycle() #Cycle: {} {
-	<CYCLE> CycleCriteria()
-}
-
-void SimpleCycle() #SimpleCycle: {} {
-	<SIMPLECYCLE> CycleCriteria()
-}
-
-void PathCriteria() #Criteria: {} {
-	(GraphCriteria() |  OptimalCriteria()) (Amount())? (RestrictionPath())?
-}
-
-void FindCriteria() #FindCriteria: {} {
-	<NEAREST> (Amount())? (RestrictionPath())?
-}
-
-void CycleCriteria() #CycleCriteria: {} {
-	Length() (  (GraphCriteria() |  OptimalCriteria()) (Amount())? (RestrictionPath())?  )?
-}
-
-void GraphCriteria() #void: {} {
-	<SHORTEST> #Shortest
-	|
-	<CHEAPEST> #Cheapest
-}
-
-void OptimalCriteria() #void: {} {
-	<MAXIMIZE> #Maximize Property() 
-	|
-	<MINIMIZE> #Minimize Property() 
-}
-
-void RestrictionPath() #RestrictPath: {} {
-	(<NOT>)? <PASS> RestrictionPathParam()
-}
-
-void RestrictionPathParam() #Restriction: {Token t;} {
-	t=<VAR> {
-		jjtThis.value = t.image;
-	}(<COMMA> RestrictionPathParam())*
-}
-
-void Amount() #Amount: {Token t;} {
-	t=<INT> {
-		jjtThis.value = t.image;
+To Path(Token t) #To: {To obj;} {
+	{
+		obj = new To();
+		obj.sourceNodeName = t.image;
+	}
+	DestNode(obj) PathCriteria(obj)
+	{
+		return obj;
 	}
 }
 
-void Property() #Property: {Token t;} {
-	t=<VAR> {
-		jjtThis.value = t.image;
+void DestNode(To obj) #void: {Token t;} {
+	<DEST> t=<VAR>
+	{
+		obj.destNodeName = t.image;
 	}
 }
 
-void Length() #Length: {Token t;} {
-	<LENGTH> t=<INT> {
-		jjtThis.value = t.image;
+void PathCriteria(To obj) #void: {} {
+	OptimalCriteria(obj) (RestrictionPath(obj))?
+}
+
+void OptimalCriteria(To obj) #void: {} {
+	( <MINIMIZE>
+	{
+		obj.toMinimize = true;
 	}
+	| <MAXIMIZE>
+	{
+		obj.toMinimize = false;
+	}
+	) Property(obj) 
+}
+
+void Property(To obj) #void: {Token t;} {
+	t=<VAR>
+	{
+		obj.attributeFocus = t.image;
+	}
+}
+
+void RestrictionPath(To obj) #void: {} {
+	{
+		obj.usePassingRestriction = true;
+	}
+	(<NOT>
+	{
+		obj.toPass = false;
+	}
+	)? <PASS>	RestrictionPathParam(obj)
+}
+
+void RestrictionPathParam(To obj) #void: {Token t;} {
+	t=<VAR>
+	{
+		obj.restrictionPathNodes.add(t.image);
+	}
+	(<COMMA> RestrictionPathParam(obj))?
 }

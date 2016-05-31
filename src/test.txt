@@ -1,0 +1,3 @@
+src a dest b minimize problemas;
+src a dest b maximize cost not pass c;
+src a dest b minimize cost pass c, d;
