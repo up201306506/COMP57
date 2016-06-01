@@ -1,11 +1,7 @@
-import java.util.ArrayList;
 
 public class To extends Path{
 	
 	public String destNodeName;
-	public boolean usePassingRestriction = false;
-	public boolean toPass = true; // if false is notToPass
-	public ArrayList<String> restrictionPathNodes = new ArrayList<>();
 	
 	public To(){
 		
@@ -13,7 +9,29 @@ public class To extends Path{
 	
 	@Override
 	public String toString() {
-		String holder = sourceNodeName + "#" + destNodeName + "%";
+		
+		String holder = "";
+		holder += "src " + sourceNodeName + " dest " + destNodeName + " ";
+		if(toMinimize) holder += "minimize";
+		else holder += "maximize";
+		holder += " " + attributeFocus;
+		if(usePassingRestriction){
+			holder += " ";
+			
+			if(toPass) holder += "pass";
+			else holder += "not pass";
+			
+			holder += " ";
+			
+			for(int i = 0; i < restrictionPathNodes.size() - 1; i++)
+				holder += restrictionPathNodes.get(i) + ", ";
+			
+			holder += restrictionPathNodes.get(restrictionPathNodes.size() - 1);
+		}
+		holder += "\n";
+		
+		// TODO block To change
+		holder += sourceNodeName + "#" + destNodeName + "%";
 		if(toMinimize) holder += "minimize";
 		else holder += "maximize";
 		holder += "-" + attributeFocus + "%";
@@ -24,6 +42,7 @@ public class To extends Path{
 			for(String s : restrictionPathNodes)
 				holder += s + ">";
 		}
+		
 		return holder.substring(0, holder.length() - 1);
 	}
 }

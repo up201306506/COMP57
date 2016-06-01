@@ -27,7 +27,7 @@ public interface ParserNavConstants {
   /** RegularExpression Id. */
   int PASS = 14;
   /** RegularExpression Id. */
-  int LENGTH = 15;
+  int MINLENGTH = 15;
   /** RegularExpression Id. */
   int NEAREST = 16;
   /** RegularExpression Id. */
@@ -59,7 +59,7 @@ public interface ParserNavConstants {
     "\"simplecycle\"",
     "\"not\"",
     "\"pass\"",
-    "\"length\"",
+    "\"minlength\"",
     "\"nearest\"",
     "\"maximize\"",
     "\"minimize\"",

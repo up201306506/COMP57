@@ -1,0 +1,18 @@
+src a dest b minimize attr
+a#b%minimize-attr
+
+src a dest b maximize attr not pass c
+a#b%maximize-attr%NotPass->c
+
+src a dest b minimize attr pass c, d
+a#b%minimize-attr%Pass->c>d
+
+src a cycle minlength 0 attr
+a#ml=0%cycle-attr
+
+src a cycle minlength 0 attr not pass c
+a#ml=0%cycle-attr%NotPass->c
+
+src a simplecycle minlength 0 attr pass c, d
+a#ml=0%simplecycle-attr%Pass->c>d
+

@@ -7,7 +7,7 @@ public class ParserNav/*@bgen(jjtree)*/implements ParserNavTreeConstants, Parser
   protected static JJTParserNavState jjtree = new JJTParserNavState();
         public static LinkedList<Path> querries = new LinkedList<Path>();
 
-        public static void main(String args[]) throws ParseException, FileNotFoundException {
+        public static void main(String args[]) throws ParseException, IOException {
 
                 // checks args
                 if(args.length != 1){
@@ -25,20 +25,54 @@ public class ParserNav/*@bgen(jjtree)*/implements ParserNavTreeConstants, Parser
                 root.dump("");
                 System.out.println("\u005cn--------");
 
-                exportToFile(args[0]);
+                exportToFile(root, args[0]);
         }
 
-        public static void exportToFile(String filePath){
-                System.out.println("Exporting To File");
+        public static void exportToFile(SimpleNode root, String filePath) throws IOException{
+                System.out.println("Exporting To File\u005cn");
 
                 int index = filePath.lastIndexOf(".");
                 String exportFile = filePath.substring(0, index);
                 exportFile += "_output";
                 exportFile += filePath.substring(index, filePath.length());
 
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(exportFile))));
+
+                int indexAST = 0;
                 while(!querries.isEmpty()){
-                        System.out.println((To) querries.remove());
+                        Path querry = querries.remove();
+
+                        switch (((SimpleNode) root.jjtGetChild(indexAST)).id) {
+                        case ParserNavTreeConstants.JJTTO:
+                                bw.write(((To) querry).toString());
+                                bw.newLine();
+                                bw.newLine();
+
+                                System.out.println((To) querry);
+                                System.out.println("\u005cn");
+                                break;
+                        case ParserNavTreeConstants.JJTCYCLE:
+                                bw.write(((Cycle) querry).toString());
+                                bw.newLine();
+                                bw.newLine();
+
+                                System.out.println((Cycle) querry);
+                                System.out.println("\u005cn");
+                                break;
+                        case ParserNavTreeConstants.JJTSIMPLECYCLE:
+                                bw.write(((Cycle) querry).toString());
+                                bw.newLine();
+                                bw.newLine();
+
+                                System.out.println((Cycle) querry);
+                                System.out.println("\u005cn");
+                                break;
+                        }
+
+                        indexAST++;
                 }
+
+                bw.close();
         }
 
   static final public SimpleNode ParseExpression() throws ParseException {/*@bgen(jjtree) Parse */
@@ -46,23 +80,7 @@ public class ParserNav/*@bgen(jjtree)*/implements ParserNavTreeConstants, Parser
                                       boolean jjtc000 = true;
                                       jjtree.openNodeScope(jjtn000);Path obj;
     try {
-      obj = StartNode();
-      jj_consume_token(SEMICOLON);
-querries.add(obj);
-      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case 0:{
-        jj_consume_token(0);
-        break;
-        }
-      case SRC:{
-        ParseExpression();
-        break;
-        }
-      default:
-        jj_la1[0] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
+      ParseExpressionAux();
 jjtree.closeNodeScope(jjtn000, true);
           jjtc000 = false;
 {if ("" != null) return jjtn000;}
@@ -88,10 +106,44 @@ if (jjtc000) {
     throw new Error("Missing return statement in function");
   }
 
+  static final public void ParseExpressionAux() throws ParseException {Path obj;
+    obj = StartNode();
+    jj_consume_token(SEMICOLON);
+querries.add(obj);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case 0:{
+      jj_consume_token(0);
+      break;
+      }
+    case SRC:{
+      ParseExpressionAux();
+      break;
+      }
+    default:
+      jj_la1[0] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+  }
+
   static final public Path StartNode() throws ParseException {Token t; Path obj;
     jj_consume_token(SRC);
     t = jj_consume_token(VAR);
-    obj = Path(t);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case DEST:{
+      obj = Path(t);
+      break;
+      }
+    case CYCLE:
+    case SIMPLECYCLE:{
+      obj = Cycle(t);
+      break;
+      }
+    default:
+      jj_la1[1] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
 {if ("" != null) return obj;}
     throw new Error("Missing return statement in function");
   }
@@ -145,12 +197,12 @@ obj.destNodeName = t.image;
       break;
       }
     default:
-      jj_la1[1] = jj_gen;
+      jj_la1[2] = jj_gen;
       ;
     }
   }
 
-  static final public void OptimalCriteria(To obj) throws ParseException {
+  static final public void OptimalCriteria(Path obj) throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case MINIMIZE:{
       jj_consume_token(MINIMIZE);
@@ -163,19 +215,19 @@ obj.toMinimize = false;
       break;
       }
     default:
-      jj_la1[2] = jj_gen;
+      jj_la1[3] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
     Property(obj);
   }
 
-  static final public void Property(To obj) throws ParseException {Token t;
+  static final public void Property(Path obj) throws ParseException {Token t;
     t = jj_consume_token(VAR);
 obj.attributeFocus = t.image;
   }
 
-  static final public void RestrictionPath(To obj) throws ParseException {
+  static final public void RestrictionPath(Path obj) throws ParseException {
 obj.usePassingRestriction = true;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case NOT:{
@@ -184,14 +236,14 @@ obj.toPass = false;
       break;
       }
     default:
-      jj_la1[3] = jj_gen;
+      jj_la1[4] = jj_gen;
       ;
     }
     jj_consume_token(PASS);
     RestrictionPathParam(obj);
   }
 
-  static final public void RestrictionPathParam(To obj) throws ParseException {Token t;
+  static final public void RestrictionPathParam(Path obj) throws ParseException {Token t;
     t = jj_consume_token(VAR);
 obj.restrictionPathNodes.add(t.image);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -201,9 +253,76 @@ obj.restrictionPathNodes.add(t.image);
       break;
       }
     default:
-      jj_la1[4] = jj_gen;
+      jj_la1[5] = jj_gen;
       ;
     }
+  }
+
+  static final public Cycle Cycle(Token t) throws ParseException {Cycle obj;
+obj = new Cycle();
+                obj.sourceNodeName = t.image;
+    CycleCondition(obj);
+    CycleCriteria(obj);
+{if ("" != null) return obj;}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public void CycleCondition(Cycle obj) throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case CYCLE:{
+SimpleNode jjtn001 = new SimpleNode(JJTCYCLE);
+            boolean jjtc001 = true;
+            jjtree.openNodeScope(jjtn001);
+      try {
+        jj_consume_token(CYCLE);
+      } finally {
+if (jjtc001) {
+              jjtree.closeNodeScope(jjtn001, true);
+            }
+      }
+obj.canRepeatNodes = false;
+      break;
+      }
+    case SIMPLECYCLE:{
+SimpleNode jjtn002 = new SimpleNode(JJTSIMPLECYCLE);
+            boolean jjtc002 = true;
+            jjtree.openNodeScope(jjtn002);
+      try {
+        jj_consume_token(SIMPLECYCLE);
+      } finally {
+if (jjtc002) {
+              jjtree.closeNodeScope(jjtn002, true);
+            }
+      }
+obj.canRepeatNodes = true;
+      break;
+      }
+    default:
+      jj_la1[6] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+  }
+
+  static final public void CycleCriteria(Cycle obj) throws ParseException {
+    Length(obj);
+    Property(obj);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case NOT:
+    case PASS:{
+      RestrictionPath(obj);
+      break;
+      }
+    default:
+      jj_la1[7] = jj_gen;
+      ;
+    }
+  }
+
+  static final public void Length(Cycle obj) throws ParseException {Token t;
+    jj_consume_token(MINLENGTH);
+    t = jj_consume_token(INT);
+obj.minLength = Integer.parseInt(t.image);
   }
 
   static private boolean jj_initialized_once = false;
@@ -216,13 +335,13 @@ obj.restrictionPathNodes.add(t.image);
   static public Token jj_nt;
   static private int jj_ntk;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[5];
+  static final private int[] jj_la1 = new int[8];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x101,0x6000,0x60000,0x2000,0x40,};
+      jj_la1_0 = new int[] {0x101,0x1a00,0x6000,0x60000,0x2000,0x40,0x1800,0x6000,};
    }
 
   /** Constructor with InputStream. */
@@ -243,7 +362,7 @@ obj.restrictionPathNodes.add(t.image);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 8; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -258,7 +377,7 @@ obj.restrictionPathNodes.add(t.image);
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 8; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -275,7 +394,7 @@ obj.restrictionPathNodes.add(t.image);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 8; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -286,7 +405,7 @@ obj.restrictionPathNodes.add(t.image);
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 8; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -302,7 +421,7 @@ obj.restrictionPathNodes.add(t.image);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 8; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -312,7 +431,7 @@ obj.restrictionPathNodes.add(t.image);
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 8; i++) jj_la1[i] = -1;
   }
 
   static private Token jj_consume_token(int kind) throws ParseException {
@@ -368,7 +487,7 @@ obj.restrictionPathNodes.add(t.image);
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 8; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

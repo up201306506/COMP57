@@ -4,12 +4,16 @@ public interface ParserNavTreeConstants
   public int JJTPARSE = 0;
   public int JJTVOID = 1;
   public int JJTTO = 2;
+  public int JJTCYCLE = 3;
+  public int JJTSIMPLECYCLE = 4;
 
 
   public String[] jjtNodeName = {
     "Parse",
     "void",
     "To",
+    "Cycle",
+    "SimpleCycle",
   };
 }
-/* JavaCC - OriginalChecksum=1ddc308d389bce6d0c49e0b0e68eb87f (do not edit this line) */
+/* JavaCC - OriginalChecksum=c58ee5a646e18545eab12aaa77491e6a (do not edit this line) */

@@ -11,7 +11,7 @@ public class ParserNav {
 	
 	public static LinkedList<Path> querries = new LinkedList<Path>();
 	
-	public static void main(String args[]) throws ParseException, FileNotFoundException {
+	public static void main(String args[]) throws ParseException, IOException {
 		
 		// checks args
 		if(args.length != 1){
@@ -29,20 +29,54 @@ public class ParserNav {
 		root.dump("");
 		System.out.println("\n--------");
 		
-		exportToFile(args[0]);
+		exportToFile(root, args[0]);
 	}
 	
-	public static void exportToFile(String filePath){
-		System.out.println("Exporting To File");
+	public static void exportToFile(SimpleNode root, String filePath) throws IOException{
+		System.out.println("Exporting To File\n");
 		
 		int index = filePath.lastIndexOf(".");
 		String exportFile = filePath.substring(0, index);
 		exportFile += "_output";
 		exportFile += filePath.substring(index, filePath.length());
 		
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(exportFile))));
+		
+		int indexAST = 0;
 		while(!querries.isEmpty()){
-			System.out.println((To) querries.remove());
+			Path querry = querries.remove();
+			
+			switch (((SimpleNode) root.jjtGetChild(indexAST)).id) {
+			case ParserNavTreeConstants.JJTTO:
+				bw.write(((To) querry).toString());
+				bw.newLine();
+				bw.newLine();
+				
+				System.out.println((To) querry);
+				System.out.println("\n");
+				break;
+			case ParserNavTreeConstants.JJTCYCLE:
+				bw.write(((Cycle) querry).toString());
+				bw.newLine();
+				bw.newLine();
+				
+				System.out.println((Cycle) querry);
+				System.out.println("\n");
+				break;
+			case ParserNavTreeConstants.JJTSIMPLECYCLE:
+				bw.write(((Cycle) querry).toString());
+				bw.newLine();
+				bw.newLine();
+				
+				System.out.println((Cycle) querry);
+				System.out.println("\n");
+				break;
+			}
+			
+			indexAST++;
 		}
+		
+		bw.close();
 	}
 }
 
@@ -68,7 +102,7 @@ TOKEN :
 |	< SIMPLECYCLE: ( "simplecycle" ) >
 |	< NOT: ( "not" ) >
 |	< PASS: ( "pass" ) >
-|	< LENGTH: ( "length" ) >
+|	< MINLENGTH: ( "minlength" ) >
 |	< NEAREST: ( "nearest" ) >
 |	< MAXIMIZE: ( "maximize" ) >
 |	< MINIMIZE: ( "minimize" ) >
@@ -77,19 +111,23 @@ TOKEN :
 }
 
 SimpleNode ParseExpression() #Parse: {Path obj;} {
-	obj=StartNode() <SEMICOLON>
-	{
-		querries.add(obj);
-	}
-	( <EOF> | ParseExpression() )
+	ParseExpressionAux()
 	{
 		return jjtThis;
 	}
 }
 
+void ParseExpressionAux() #void: {Path obj;} {
+	obj=StartNode() <SEMICOLON>
+	{
+		querries.add(obj);
+	}
+	( <EOF> | ParseExpressionAux() )
+}
+
 Path StartNode() #void: {Token t; Path obj;} {
 	<SRC> t=<VAR>
-	obj=Path(t)
+	(obj=Path(t) | obj=Cycle(t) )
 	{
 		return obj;
 	}
@@ -117,7 +155,7 @@ void PathCriteria(To obj) #void: {} {
 	OptimalCriteria(obj) (RestrictionPath(obj))?
 }
 
-void OptimalCriteria(To obj) #void: {} {
+void OptimalCriteria(Path obj) #void: {} {
 	( <MINIMIZE>
 	{
 		obj.toMinimize = true;
@@ -129,14 +167,14 @@ void OptimalCriteria(To obj) #void: {} {
 	) Property(obj) 
 }
 
-void Property(To obj) #void: {Token t;} {
+void Property(Path obj) #void: {Token t;} {
 	t=<VAR>
 	{
 		obj.attributeFocus = t.image;
 	}
 }
 
-void RestrictionPath(To obj) #void: {} {
+void RestrictionPath(Path obj) #void: {} {
 	{
 		obj.usePassingRestriction = true;
 	}
@@ -147,10 +185,44 @@ void RestrictionPath(To obj) #void: {} {
 	)? <PASS>	RestrictionPathParam(obj)
 }
 
-void RestrictionPathParam(To obj) #void: {Token t;} {
+void RestrictionPathParam(Path obj) #void: {Token t;} {
 	t=<VAR>
 	{
 		obj.restrictionPathNodes.add(t.image);
 	}
 	(<COMMA> RestrictionPathParam(obj))?
+}
+
+Cycle Cycle(Token t) #void: {Cycle obj;} {
+	{
+		obj = new Cycle();
+		obj.sourceNodeName = t.image;
+	}
+	CycleCondition(obj) CycleCriteria(obj)
+	{
+		return obj;
+	}
+}
+
+void CycleCondition(Cycle obj) #void: {} {
+	( <CYCLE> #Cycle
+	{
+		obj.canRepeatNodes = false;
+	}
+	| <SIMPLECYCLE> #SimpleCycle
+	{
+		obj.canRepeatNodes = true;
+	}
+	)
+}
+
+void CycleCriteria(Cycle obj) #void: {} {
+	Length(obj) Property(obj) (RestrictionPath(obj))?
+}
+
+void Length(Cycle obj) #void: {Token t;} {
+	<MINLENGTH> t=<INT>
+	{
+		obj.minLength = Integer.parseInt(t.image);
+	}
 }

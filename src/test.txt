@@ -1,3 +1,7 @@
-src a dest b minimize problemas;
-src a dest b maximize cost not pass c;
-src a dest b minimize cost pass c, d;
+src a dest b minimize attr;
+src a dest b maximize attr not pass c;
+src a dest b minimize attr pass c, d;
+
+src a cycle minlength 0 attr;
+src a cycle minlength 0 attr not pass c;
+src a simplecycle minlength 0 attr pass c, d;
