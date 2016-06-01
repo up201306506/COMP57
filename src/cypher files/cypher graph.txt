@@ -2,14 +2,14 @@
 
 CREATE 
 //Center
-(A:Place{name:'Place A'}),
+(A:Place{name:'PlaceA'}),
 //Inner Cross
-(B:Place{name:'Place B'}),(C:Place{name:'Place C'}),(D:Place{name:'Place D'}),(E:Place{name:'Place E'}),
+(B:Place{name:'PlaceB'}),(C:Place{name:'PlaceC'}),(D:Place{name:'PlaceD'}),(E:Place{name:'PlaceE'}),
 //Outter Ring
-(F:Place{name:'Place F'}),(G:Place{name:'Place G'}),(H:Place{name:'Place H'}),(I:Place{name:'Place I'}),
-(J:Place{name:'Place J'}),(K:Place{name:'Place K'}),(L:Place{name:'Place L'}),(M:Place{name:'Place M'}),
+(F:Place{name:'PlaceF'}),(G:Place{name:'PlaceG'}),(H:Place{name:'PlaceH'}),(I:Place{name:'PlaceI'}),
+(J:Place{name:'PlaceJ'}),(K:Place{name:'PlaceK'}),(L:Place{name:'PlaceL'}),(M:Place{name:'PlaceM'}),
 //Outliers
-(N:Place{name:'Place N'}),(Q:Place{name:'Place Q'}),(O:Place{name:'Place O'}),(P:Place{name:'Place P'}),
+(N:Place{name:'PlaceN'}),(Q:Place{name:'PlaceQ'}),(O:Place{name:'PlaceO'}),(P:Place{name:'PlaceP'}),
 
 
 //Inner Cross
