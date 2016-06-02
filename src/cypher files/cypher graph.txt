@@ -27,7 +27,7 @@ CREATE
 (F)-[:ROAD{km:1,speed:30}]->(G),(G)-[:ROAD{km:1,speed:30}]->(F),
 (G)-[:ROAD{km:1,speed:30}]->(H),(H)-[:ROAD{km:1,speed:30}]->(G),
 (H)-[:ROAD{km:1,speed:30}]->(I),(I)-[:ROAD{km:1,speed:30}]->(H),
-(I)-[:ROAD{km:1,speed:30}]->(J),(J)-[:ROAD{km:1,speed:30}]->(I),
+(I)-[:ROAD{km:5,speed:30}]->(J),(J)-[:ROAD{km:5,speed:30}]->(I),
 (J)-[:ROAD{km:1,speed:30}]->(K),(K)-[:ROAD{km:1,speed:30}]->(J),
 (K)-[:ROAD{km:1,speed:30}]->(L),(L)-[:ROAD{km:1,speed:30}]->(K),
 (L)-[:ROAD{km:1,speed:30}]->(M),(M)-[:ROAD{km:1,speed:30}]->(L),

@@ -31,6 +31,21 @@ public class To extends Path{
 		holder += "\n";
 		
 		// TODO block To change
+		holder += "MATCH  p=(src)-[:ROAD*1..100]->(dest)\n";
+		holder += "WHERE src.name = " + sourceNodeName + "\n";
+		holder += "WHERE dest.name = " + destNodeName + "\n";
+		holder += "RETURN p AS path,\n";
+		holder += "reduce(" + attributeFocus + "=0, r in relationships(p) | ";
+			+attributeFocus+"+r."+attributeFocus+") AS total"+attributeFocus+"\n";
+		holder += "ORDER BY total"+attributeFocus+" ";
+		if(toMinimize) holder += "ASC\n";
+		else holder += "DESC\n";
+		holder += "LIMIT 1";
+		
+		
+		/*
+		//Original code block
+		
 		holder += sourceNodeName + "#" + destNodeName + "%";
 		if(toMinimize) holder += "minimize";
 		else holder += "maximize";
@@ -42,6 +57,7 @@ public class To extends Path{
 			for(String s : restrictionPathNodes)
 				holder += s + ">";
 		}
+		*/
 		
 		return holder.substring(0, holder.length() - 1);
 	}
