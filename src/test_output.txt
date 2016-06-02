@@ -1,11 +1,29 @@
 src a dest b minimize attr
-a#b%minimize-attr
+MATCH  p=(src)-[:ROAD*1..100]->(dest)
+WHERE src.name = a
+WHERE dest.name = b
+RETURN p AS path,
+reduce(attr=0, r in relationships(p) | attr+r.attr) AS totalattr
+ORDER BY totalattr ASC
+LIMIT 1
 
 src a dest b maximize attr not pass c
-a#b%maximize-attr%NotPass->c
+MATCH  p=(src)-[:ROAD*1..100]->(dest)
+WHERE src.name = a
+WHERE dest.name = b
+RETURN p AS path,
+reduce(attr=0, r in relationships(p) | attr+r.attr) AS totalattr
+ORDER BY totalattr DESC
+LIMIT 1
 
 src a dest b minimize attr pass c, d
-a#b%minimize-attr%Pass->c>d
+MATCH  p=(src)-[:ROAD*1..100]->(dest)
+WHERE src.name = a
+WHERE dest.name = b
+RETURN p AS path,
+reduce(attr=0, r in relationships(p) | attr+r.attr) AS totalattr
+ORDER BY totalattr ASC
+LIMIT 1
 
 src a cycle minlength 0 attr
 a#ml=0%cycle-attr
