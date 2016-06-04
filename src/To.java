@@ -33,8 +33,8 @@ public class To extends Path{
 
 		// Cypher Translation
 		holder += "MATCH  p=(src)-[:ROAD*1..100]->(dest)\n";
-		holder += "WHERE src.name = " + sourceNodeName + "\n";
-		holder += "WHERE dest.name = " + destNodeName + "\n";
+		holder += "WHERE src.name = '" + sourceNodeName + "'\n";
+		holder += "AND dest.name = '" + destNodeName + "'\n";
 		holder += "RETURN p AS path,\n";
 		holder += "reduce(" + attributeFocus + "=0, r in relationships(p) | "
 				+ attributeFocus + "+r." + attributeFocus + ") AS total" + attributeFocus + "\n";

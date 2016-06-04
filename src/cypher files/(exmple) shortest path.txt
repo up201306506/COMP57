@@ -1,18 +1,20 @@
+//MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n, r
+
 CREATE
-(A:Place{name:'PlaceA'}),(E:Place{name:'PlaceE'}),(D:Place{name:'PlaceD'}),
-(I:Place{name:'PlaceI'}),(J:Place{name:'PlaceJ'}),(K:Place{name:'PlaceK'}),
+(A:Place{name:'PlaceA'}),(B:Place{name:'PlaceB'}),(D:Place{name:'PlaceD'}),
+(E:Place{name:'PlaceE'}),(F:Place{name:'PlaceF'}),(C:Place{name:'PlaceC'}),
 
 (A)-[:ROAD{km:1.4142,speed:30}]->(D),(D)-[:ROAD{km:1.4142,speed:30}]->(A),
-(A)-[:ROAD{km:1.4142,speed:30}]->(E),(E)-[:ROAD{km:1.4142,speed:30}]->(A),
-(D)-[:ROAD{km:1.4142,speed:30}]->(K),(K)-[:ROAD{km:1.4142,speed:30}]->(D),
-(E)-[:ROAD{km:1.4142,speed:30}]->(I),(I)-[:ROAD{km:1.4142,speed:30}]->(E),
-(I)-[:ROAD{km:5,speed:30}]->(J),(J)-[:ROAD{km:5,speed:30}]->(I),
-(J)-[:ROAD{km:1,speed:30}]->(K),(K)-[:ROAD{km:1,speed:30}]->(J)
+(A)-[:ROAD{km:1.4142,speed:30}]->(B),(B)-[:ROAD{km:1.4142,speed:30}]->(A),
+(D)-[:ROAD{km:1.4142,speed:30}]->(C),(C)-[:ROAD{km:1.4142,speed:30}]->(D),
+(B)-[:ROAD{km:1.4142,speed:30}]->(E),(E)-[:ROAD{km:1.4142,speed:30}]->(B),
+(E)-[:ROAD{km:5,speed:30}]->(F),(F)-[:ROAD{km:5,speed:30}]->(E),
+(F)-[:ROAD{km:1,speed:30}]->(C),(C)-[:ROAD{km:1,speed:30}]->(F)
 
 
 MATCH  p=(src)-[:ROAD*1..4]->(dest)
 WHERE src.name = 'PlaceA'
-AND dest.name = 'PlaceJ'
+AND dest.name = 'PlaceF'
 RETURN p AS shortestPath, 
        reduce(km=0, r in relationships(p) | km+r.km) AS totaldistance
        ORDER BY totaldistance ASC

@@ -1,28 +1,28 @@
-src a dest b minimize attr
+src PlaceA dest PlaceF minimize km
 MATCH  p=(src)-[:ROAD*1..100]->(dest)
-WHERE src.name = a
-WHERE dest.name = b
+WHERE src.name = 'PlaceA'
+AND dest.name = 'PlaceF'
 RETURN p AS path,
-reduce(attr=0, r in relationships(p) | attr+r.attr) AS totalattr
-ORDER BY totalattr ASC
+reduce(km=0, r in relationships(p) | km+r.km) AS totalkm
+ORDER BY totalkm ASC
 LIMIT 1
 
-src a dest b maximize attr not pass c
+src PlaceA dest PlaceF maximize km not pass c
 MATCH  p=(src)-[:ROAD*1..100]->(dest)
-WHERE src.name = a
-WHERE dest.name = b
+WHERE src.name = 'PlaceA'
+AND dest.name = 'PlaceF'
 RETURN p AS path,
-reduce(attr=0, r in relationships(p) | attr+r.attr) AS totalattr
-ORDER BY totalattr DESC
+reduce(km=0, r in relationships(p) | km+r.km) AS totalkm
+ORDER BY totalkm DESC
 LIMIT 1
 
-src a dest b minimize attr pass c, d
+src PlaceA dest PlaceF minimize km pass c, d
 MATCH  p=(src)-[:ROAD*1..100]->(dest)
-WHERE src.name = a
-WHERE dest.name = b
+WHERE src.name = 'PlaceA'
+AND dest.name = 'PlaceF'
 RETURN p AS path,
-reduce(attr=0, r in relationships(p) | attr+r.attr) AS totalattr
-ORDER BY totalattr ASC
+reduce(km=0, r in relationships(p) | km+r.km) AS totalkm
+ORDER BY totalkm ASC
 LIMIT 1
 
 src a cycle minlength 0 attr
