@@ -2,6 +2,6 @@ src PlaceA dest PlaceF minimize km;
 src PlaceA dest PlaceF maximize km not pass c;
 src PlaceA dest PlaceF minimize km pass c, d;
 
-src a cycle minlength 0 attr;
-src a cycle minlength 0 attr not pass c;
-src a simplecycle minlength 0 attr pass c, d;
+src PlaceA cycle minlength 0 km;
+src PlaceA cycle minlength 0 km not pass c;
+src PlaceA simplecycle minlength 0 km pass c, d;

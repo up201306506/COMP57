@@ -2,7 +2,7 @@ src PlaceA dest PlaceF minimize km
 MATCH  p=(src)-[:ROAD*1..100]->(dest)
 WHERE src.name = 'PlaceA'
 AND dest.name = 'PlaceF'
-RETURN p AS path,
+AND ALL(n in nodes(p) where 1=size(filter(m in nodes(p) WHERE m=n)))RETURN p AS path,
 reduce(km=0, r in relationships(p) | km+r.km) AS totalkm
 ORDER BY totalkm ASC
 LIMIT 1
@@ -11,7 +11,7 @@ src PlaceA dest PlaceF maximize km not pass c
 MATCH  p=(src)-[:ROAD*1..100]->(dest)
 WHERE src.name = 'PlaceA'
 AND dest.name = 'PlaceF'
-RETURN p AS path,
+AND ALL(n in nodes(p) where 1=size(filter(m in nodes(p) WHERE m=n)))RETURN p AS path,
 reduce(km=0, r in relationships(p) | km+r.km) AS totalkm
 ORDER BY totalkm DESC
 LIMIT 1
@@ -20,17 +20,17 @@ src PlaceA dest PlaceF minimize km pass c, d
 MATCH  p=(src)-[:ROAD*1..100]->(dest)
 WHERE src.name = 'PlaceA'
 AND dest.name = 'PlaceF'
-RETURN p AS path,
+AND ALL(n in nodes(p) where 1=size(filter(m in nodes(p) WHERE m=n)))RETURN p AS path,
 reduce(km=0, r in relationships(p) | km+r.km) AS totalkm
 ORDER BY totalkm ASC
 LIMIT 1
 
-src a cycle minlength 0 attr
-a#ml=0%cycle-attr
+src PlaceA cycle minlength 0 km
+PlaceA#ml=0%cycle-km
 
-src a cycle minlength 0 attr not pass c
-a#ml=0%cycle-attr%NotPass->c
+src PlaceA cycle minlength 0 km not pass c
+PlaceA#ml=0%cycle-km%NotPass->c
 
-src a simplecycle minlength 0 attr pass c, d
-a#ml=0%simplecycle-attr%Pass->c>d
+src PlaceA simplecycle minlength 0 km pass c, d
+PlaceA#ml=0%simplecycle-km%Pass->c>d
 
