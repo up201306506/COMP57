@@ -1,4 +1,5 @@
 src PlaceA dest PlaceF minimize km
+---------------------
 MATCH  p=(src:Place { name:'PlaceA'})-[:ROAD*1..100]->(dest:Place { name:'PlaceF'})
 WHERE ALL(n in nodes(p) where 1=size(filter(m in nodes(p) WHERE m=n)))RETURN p AS path,
 reduce(km=0, r in relationships(p) | km+r.km) AS totalkm
@@ -6,6 +7,7 @@ ORDER BY totalkm ASC
 LIMIT 1
 
 src PlaceA dest PlaceF maximize km not pass PlaceH
+---------------------
 MATCH  p=(src:Place { name:'PlaceA'})-[:ROAD*1..100]->(dest:Place { name:'PlaceF'})
 ,(nodePlaceH:Place { name:'PlaceH' })
 WHERE ALL(n in nodes(p) where 1=size(filter(m in nodes(p) WHERE m=n)))AND NONE (n IN nodes(p) WHERE n=nodePlaceH)
@@ -14,11 +16,12 @@ reduce(km=0, r in relationships(p) | km+r.km) AS totalkm
 ORDER BY totalkm DESC
 LIMIT 1
 
-src PlaceA dest PlaceF minimize km pass PlaceC, PlaceE
+src PlaceA dest PlaceF minimize km pass PlaceB, PlaceE
+---------------------
 MATCH  p=(src:Place { name:'PlaceA'})-[:ROAD*1..100]->(dest:Place { name:'PlaceF'})
-,(nodePlaceC:Place { name:'PlaceC' })
+,(nodePlaceB:Place { name:'PlaceB' })
 ,(nodePlaceE:Place { name:'PlaceE' })
-WHERE ALL(n in nodes(p) where 1=size(filter(m in nodes(p) WHERE m=n)))RETURN p AS path,
+WHERE ALL(n in nodes(p) where 1=size(filter(m in nodes(p) WHERE m=n)))AND nodePlaceB IN nodes(p)AND nodePlaceE IN nodes(p)RETURN p AS path,
 reduce(km=0, r in relationships(p) | km+r.km) AS totalkm
 ORDER BY totalkm ASC
 LIMIT 1

@@ -1,6 +1,6 @@
 src PlaceA dest PlaceF minimize km;
 src PlaceA dest PlaceF maximize km not pass PlaceH;
-src PlaceA dest PlaceF minimize km pass PlaceC, PlaceE;
+src PlaceA dest PlaceF minimize km pass PlaceB, PlaceE;
 
 src PlaceA cycle minlength 0 km;
 src PlaceA cycle minlength 0 km not pass c;
