@@ -16,12 +16,25 @@ CREATE
 (F)-[:ROAD{km:1,cost:10}]->(C),(C)-[:ROAD{km:1,cost:10}]->(F)
 
 
-MATCH  p=(src)-[:ROAD*1..4]->(dest)
-WHERE src.name = 'PlaceA'
-AND dest.name = 'PlaceF'
-AND ALL(n in nodes(p) where 
+//Minimum Distance Path
+MATCH  p=(src:Place { name:'PlaceA'})-[:ROAD*1..4]->(dest:Place { name:'PlaceF'})
+WHERE ALL(n in nodes(p) WHERE 
           1=size(filter(m in nodes(p) WHERE m=n)))
 RETURN p AS shortestPath, 
        reduce(km=0, r in relationships(p) | km+r.km) AS totaldistance
        ORDER BY totaldistance ASC
+       LIMIT 1
+	   
+//Paths without a node
+
+//Paths WITH a node
+MATCH  p=(src:Place { name:'PlaceA'})-[:ROAD*1..4]->(dest:Place { name:'PlaceF'}), (exclude1:Place { name:'PlaceH' })
+WHERE src.name = 'PlaceA'
+AND dest.name = 'PlaceF'
+AND ALL(n in nodes(p) WHERE 
+          1=size(filter(m in nodes(p) WHERE m=n)))
+AND NONE (n IN nodes(p) WHERE n=exclude1)
+RETURN p AS shortestPath, 
+       reduce(km=0, r in relationships(p) | km+r.km) AS totaldistance
+       ORDER BY totaldistance DESC
        LIMIT 1

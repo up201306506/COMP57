@@ -31,11 +31,13 @@ public class To extends Path{
 		}
 		holder += "\n";
 
-		// Cypher Translation
-		holder += "MATCH  p=(src)-[:ROAD*1..100]->(dest)\n";
-		holder += "WHERE src.name = '" + sourceNodeName + "'\n";
-		holder += "AND dest.name = '" + destNodeName + "'\n";
-		holder += "AND ALL(n in nodes(p) where 1=size(filter(m in nodes(p) WHERE m=n)))";
+		// Cypher Translation		
+		String pathString = String.format(
+				"MATCH  p=(src:Place { name:'%s'})-[:ROAD*1..100]->(dest:Place { name:'%s'})\n", 
+				sourceNodeName, destNodeName);
+	
+		holder += pathString;
+		holder += "WHERE ALL(n in nodes(p) where 1=size(filter(m in nodes(p) WHERE m=n)))";
 		holder += "RETURN p AS path,\n";
 		holder += "reduce(" + attributeFocus + "=0, r in relationships(p) | "
 				+ attributeFocus + "+r." + attributeFocus + ") AS total" + attributeFocus + "\n";
