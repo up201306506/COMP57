@@ -35,15 +35,28 @@ public class To extends Path{
 		String pathString = String.format(
 				"MATCH  p=(src:Place { name:'%s'})-[:ROAD*1..100]->(dest:Place { name:'%s'})\n", 
 				sourceNodeName, destNodeName);
-	
 		holder += pathString;
+		
+		if(usePassingRestriction){
+			for(String s : restrictionPathNodes)
+				holder += ",(node"+s+":Place { name:'"+s+"' })\n";
+		}
+		
 		holder += "WHERE ALL(n in nodes(p) where 1=size(filter(m in nodes(p) WHERE m=n)))";
+		
+		if(usePassingRestriction){
+			if(!toPass)
+				for(String s : restrictionPathNodes)
+					holder +=  "AND NONE (n IN nodes(p) WHERE n=node"+s+")\n";
+		}
+		
 		holder += "RETURN p AS path,\n";
 		holder += "reduce(" + attributeFocus + "=0, r in relationships(p) | "
 				+ attributeFocus + "+r." + attributeFocus + ") AS total" + attributeFocus + "\n";
 		holder += "ORDER BY total" + attributeFocus + " ";
 		if(toMinimize) holder += "ASC\n";
 		else holder += "DESC\n";
+		
 		holder += "LIMIT 1";
 
 		/*
