@@ -38,7 +38,20 @@ public class Cycle extends Path {
 			
 			//Set pattern as a Cycle
 			holder += "MATCH path = (src:Place { name:'"
-			+sourceNodeName+ "'})-[r:ROAD*1..100]-(src:Place { name:'"+sourceNodeName+"'})\n";
+			+sourceNodeName+ "'})-[:ROAD*1..50]-(src:Place { name:'"+sourceNodeName+"'})\n";
+			//Choose variables to use
+			holder += "WITH path, src,reduce(" +attributeFocus + "=0, r in relationships(path) | "
+				+ attributeFocus + "+r." + attributeFocus + ") AS total" + attributeFocus + "\n";
+			//Force single occurrence of every in-path node for ONLY THE SOURCE nodes
+			holder += "WHERE SINGLE(y IN tail(nodes(path)) WHERE src=y)\n";
+			//Force minimum value of focused variable
+			holder += "AND total"+attributeFocus+" >= "+minLength+"\n";
+			// Return values
+			holder += "RETURN path, total"+attributeFocus+"\n";
+			//Order FIRST by reduction of variable, THEN largest path (in nodes)
+			holder += "ORDER BY total"+attributeFocus+" ASC, length(path) DESC\n";
+			// Limit result count
+			holder += "LIMIT 1\n";
 			
 			
 			
@@ -59,20 +72,21 @@ public class Cycle extends Path {
 			
 			//Set pattern as a Cycle
 			holder += "MATCH path = (src:Place { name:'"
-			+sourceNodeName+ "'})-[r:ROAD*1..100]-(src:Place { name:'"+sourceNodeName+"'})\n";
-			//Dictate minimumlength
-			holder += "WHERE length(path)>="+minLength+"\n";
+			+sourceNodeName+ "'})-[:ROAD*1..50]-(src:Place { name:'"+sourceNodeName+"'})\n";
+			//Choose variables to use
+			holder += "WITH path, src,reduce(" +attributeFocus + "=0, r in relationships(path) | "
+				+ attributeFocus + "+r." + attributeFocus + ") AS total" + attributeFocus + "\n";
 			//Force single occurrence of every in-path node for ALL nodes
-			holder += "AND ";
+			holder += "WHERE ";
 			holder += "ALL(x IN tail(nodes(path)) ";
 			holder += "WHERE SINGLE(y IN tail(nodes(path)) WHERE x=y))\n";
+			//Force minimum value of focused variable
+			holder += "AND total"+attributeFocus+" >= "+minLength+"\n";
 			// Return values
-			holder += "RETURN path,\n";
-			// Minimize length sing given attribute
-			holder += "reduce(" + attributeFocus + "=0, r in relationships(path) | "
-				+ attributeFocus + "+r." + attributeFocus + ") AS total" + attributeFocus + "\n";
-			holder += "ORDER BY total" + attributeFocus + ASC"\n";
-			// Limiting result count
+			holder += "RETURN path, total"+attributeFocus+"\n";
+			//Order FIRST by reduction of variable, THEN largest path (in nodes)
+			holder += "ORDER BY total"+attributeFocus+" ASC, length(path) DESC\n";
+			// Limit result count
 			holder += "LIMIT 1\n";
 			
 			

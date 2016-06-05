@@ -1,7 +1,9 @@
 src PlaceA dest PlaceF minimize km;
+src PlaceA dest PlaceF minimize cost;
 src PlaceA dest PlaceF maximize km not pass PlaceH;
 src PlaceA dest PlaceF minimize km pass PlaceB, PlaceE;
 
 src PlaceA cycle minlength 4 km;
 src PlaceA cycle minlength 4 km not pass PlaceC;
-src PlaceA simplecycle minlength 0 km pass c, d;
+src PlaceA simplecycle minlength 5 km;
+src PlaceA simplecycle minlength 5 km pass c, d;
