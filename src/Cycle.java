@@ -11,7 +11,7 @@ public class Cycle extends Path {
 	@Override
 	public String toString() {
 		
-		String holder = "";
+		String holder = "---------------------\n";
 		holder += "src " + sourceNodeName + " ";
 		if(canRepeatNodes) holder += "simplecycle";
 		else holder += "cycle";
@@ -32,9 +32,18 @@ public class Cycle extends Path {
 		holder += "\n";
 		
 		// TODO block To change
+		
+		holder += "---------------------\n";
 		if(canRepeatNodes){
+			
+			//Set pattern as a Cycle
+			holder += "MATCH path = (src:Place { name:'"
+			+sourceNodeName+ "'})-[r:ROAD*1..100]-(src:Place { name:'"+sourceNodeName+"'})\n";
+			
+			
+			
+			/*
 			String temp = "simplecycle";
-
 			holder += sourceNodeName + "#ml=" + minLength + "%" + temp;
 			holder += "-" + attributeFocus + "%";
 			if(usePassingRestriction){
@@ -44,11 +53,29 @@ public class Cycle extends Path {
 				for(String s : restrictionPathNodes)
 					holder += s + ">";
 			}
-			
+			*/
 			return holder.substring(0, holder.length() - 1);
 		}else{
+			
+			//Set pattern as a Cycle
+			holder += "MATCH path = (src:Place { name:'"
+			+sourceNodeName+ "'})-[r:ROAD*1..100]-(src:Place { name:'"+sourceNodeName+"'})\n";
+			//Dictate minimumlength
+			holder += "WHERE length(path)>="+minLength+"\n";
+			//Force single occurrence of every in-path node for ALL nodes
+			holder += "AND\n";
+			holder += "ALL(x IN tail(nodes(path)) \n";
+			holder += "WHERE SINGLE(y IN tail(nodes(path)) WHERE x=y))\n";
+			// Return values
+			holder += "RETURN nodes(path),\n";
+			// Minimize length sing given attribute
+			holder += "length(path) AS length\n";
+			// Limiting result count
+			holder += "LIMIT 1\n";
+			
+			
+			/*
 			String temp = "cycle";
-
 			holder += sourceNodeName + "#ml=" + minLength + "%" + temp;
 			holder += "-" + attributeFocus + "%";
 			if(usePassingRestriction){
@@ -58,6 +85,7 @@ public class Cycle extends Path {
 				for(String s : restrictionPathNodes)
 					holder += s + ">";
 			}
+			*/
 			
 			return holder.substring(0, holder.length() - 1);
 		}

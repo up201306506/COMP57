@@ -11,7 +11,7 @@ public class To extends Path{
 	public String toString() {
 
 		// original querry
-		String holder = "";
+		String holder = "---------------------\n";
 		holder += "src " + sourceNodeName + " dest " + destNodeName + " ";
 		if(toMinimize) holder += "minimize";
 		else holder += "maximize";
@@ -47,19 +47,20 @@ public class To extends Path{
 				holder += ",(node"+s+":Place { name:'"+s+"' })\n";
 		}
 		//Prevent Backtracking
-		holder += "WHERE ALL(n in nodes(p) where 1=size(filter(m in nodes(p) WHERE m=n)))";
+		holder += "WHERE ALL(n IN nodes(p) WHERE 1=size(filter(m in nodes(p) WHERE m=n)))\n";
 		//Define Restriction Type
 		if(usePassingRestriction){
 			if(toPass)
 				for(String s : restrictionPathNodes)
-					holder +=  "AND node"+s+" IN nodes(p)";
+					holder +=  "AND node"+s+" IN nodes(p)\n";
 			else
 				for(String s : restrictionPathNodes)
 					holder +=  "AND NONE (n IN nodes(p) WHERE n=node"+s+")\n";
 				
 		}
-		//Define min/max
+		//RETURN values
 		holder += "RETURN p AS path,\n";
+		//Define min/max through return ordering
 		holder += "reduce(" + attributeFocus + "=0, r in relationships(p) | "
 				+ attributeFocus + "+r." + attributeFocus + ") AS total" + attributeFocus + "\n";
 		holder += "ORDER BY total" + attributeFocus + " ";

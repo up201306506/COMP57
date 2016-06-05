@@ -5,12 +5,23 @@ CREATE
 (E:Place{name:'PlaceE'}),(F:Place{name:'PlaceF'}),(C:Place{name:'PlaceC'}),
 (G:Place{name:'PlaceG'}),(H:Place{name:'PlaceH'}),
 
-(A)-[:ROAD{km:1.4142,cost:0}]->(D),(D)-[:ROAD{km:1.4142,cost:0}]->(A),
-(A)-[:ROAD{km:1.4142,cost:0}]->(B),(B)-[:ROAD{km:1.4142,cost:0}]->(A),
-(A)-[:ROAD{km:1.4142,cost:0}]->(G),(G)-[:ROAD{km:1.4142,cost:0}]->(A),
-(D)-[:ROAD{km:1.4142,cost:0}]->(C),(C)-[:ROAD{km:1.4142,cost:0}]->(D),
-(B)-[:ROAD{km:1.4142,cost:0}]->(E),(E)-[:ROAD{km:1.4142,cost:0}]->(B),
-(H)-[:ROAD{km:1.4142,cost:0}]->(G),(G)-[:ROAD{km:1.4142,cost:0}]->(H),
+(A)-[:ROAD{km:1,cost:0}]->(D),(D)-[:ROAD{km:1,cost:0}]->(A),
+(A)-[:ROAD{km:1,cost:0}]->(B),(B)-[:ROAD{km:1,cost:0}]->(A),
+(A)-[:ROAD{km:1,cost:0}]->(G),(G)-[:ROAD{km:1,cost:0}]->(A),
+(D)-[:ROAD{km:1,cost:0}]->(C),(C)-[:ROAD{km:1,cost:0}]->(D),
+(B)-[:ROAD{km:1,cost:0}]->(E),(E)-[:ROAD{km:1,cost:0}]->(B),
+(H)-[:ROAD{km:1,cost:0}]->(G),(G)-[:ROAD{km:1,cost:0}]->(H),
 (H)-[:ROAD{km:10,cost:0}]->(F),(F)-[:ROAD{km:10,cost:0}]->(H),
 (E)-[:ROAD{km:5,cost:5}]->(F),(F)-[:ROAD{km:5,cost:5}]->(E),
 (F)-[:ROAD{km:1,cost:10}]->(C),(C)-[:ROAD{km:1,cost:10}]->(F)
+
+
+MATCH path = (src:Place { name:'PlaceA'})-[r:ROAD*1..100]-(src:Place { name:'PlaceA'})
+WHERE length(path)>=4
+AND
+	ALL(x IN tail(nodes(path)) 
+	WHERE SINGLE(y IN tail(nodes(path)) WHERE x=y))
+RETURN path,
+reduce(km=0, r in relationships(path) | km+r.km) AS totalkm
+ORDER BY totalkm ASC
+LIMIT 1
