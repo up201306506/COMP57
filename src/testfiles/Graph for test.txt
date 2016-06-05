@@ -1,0 +1,16 @@
+//MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n, r
+
+CREATE
+(A:Place{name:'PlaceA'}),(B:Place{name:'PlaceB'}),(D:Place{name:'PlaceD'}),
+(E:Place{name:'PlaceE'}),(F:Place{name:'PlaceF'}),(C:Place{name:'PlaceC'}),
+(G:Place{name:'PlaceG'}),(H:Place{name:'PlaceH'}),
+
+(A)-[:ROAD{km:1,cost:0}]->(D),(D)-[:ROAD{km:1,cost:0}]->(A),
+(A)-[:ROAD{km:1,cost:0}]->(B),(B)-[:ROAD{km:1,cost:0}]->(A),
+(A)-[:ROAD{km:1,cost:0}]->(G),(G)-[:ROAD{km:1,cost:0}]->(A),
+(D)-[:ROAD{km:1,cost:0}]->(C),(C)-[:ROAD{km:1,cost:0}]->(D),
+(B)-[:ROAD{km:1,cost:0}]->(E),(E)-[:ROAD{km:1,cost:0}]->(B),
+(H)-[:ROAD{km:1,cost:0}]->(G),(G)-[:ROAD{km:1,cost:0}]->(H),
+(H)-[:ROAD{km:10,cost:0}]->(F),(F)-[:ROAD{km:10,cost:0}]->(H),
+(E)-[:ROAD{km:5,cost:5}]->(F),(F)-[:ROAD{km:5,cost:5}]->(E),
+(F)-[:ROAD{km:1,cost:10}]->(C),(C)-[:ROAD{km:1,cost:10}]->(F)

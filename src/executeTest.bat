@@ -1,1 +1,1 @@
-java -classpath javacFiles ParserNav test.txt
+java -classpath javacFiles ParserNav testfiles/test.txt
