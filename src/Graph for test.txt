@@ -18,9 +18,11 @@ CREATE
 
 //cycle
 MATCH path = (src:Place { name:'PlaceA'})-[:ROAD*1..100]-(src:Place { name:'PlaceA'})
+,(nodePlaceC:Place { name:'PlaceC' })
 WITH path, src, reduce(km=0, r in relationships(path) | km+r.km) AS totalkm
 WHERE ALL(x IN tail(nodes(path)) WHERE SINGLE(y IN tail(nodes(path)) WHERE x=y))
 AND totalkm >= 4
+AND NONE (n IN nodes(path) WHERE n=nodePlaceC)
 RETURN path, totalkm
 ORDER BY totalkm ASC, length(path) DESC
 LIMIT 1

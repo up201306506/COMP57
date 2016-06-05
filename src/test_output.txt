@@ -56,12 +56,15 @@ ORDER BY totalkm ASC, length(path) DESC
 LIMIT 1
 
 ---------------------
-src PlaceA cycle minlength 4 km not pass PlaceC
+src PlaceA cycle minlength 4 km pass PlaceH
 ---------------------
 MATCH path = (src:Place { name:'PlaceA'})-[:ROAD*1..50]-(src:Place { name:'PlaceA'})
+,(nodePlaceH:Place { name:'PlaceH' })
 WITH path, src,reduce(km=0, r in relationships(path) | km+r.km) AS totalkm
+,nodePlaceH
 WHERE ALL(x IN tail(nodes(path)) WHERE SINGLE(y IN tail(nodes(path)) WHERE x=y))
 AND totalkm >= 4
+AND nodePlaceH IN nodes(path)
 RETURN path, totalkm
 ORDER BY totalkm ASC, length(path) DESC
 LIMIT 1
@@ -78,12 +81,15 @@ ORDER BY totalkm ASC, length(path) DESC
 LIMIT 1
 
 ---------------------
-src PlaceA simplecycle minlength 5 km pass c, d
+src PlaceA simplecycle minlength 5 km not pass PlaceD
 ---------------------
 MATCH path = (src:Place { name:'PlaceA'})-[:ROAD*1..50]-(src:Place { name:'PlaceA'})
+,(nodePlaceD:Place { name:'PlaceD' })
 WITH path, src,reduce(km=0, r in relationships(path) | km+r.km) AS totalkm
+,nodePlaceD
 WHERE SINGLE(y IN tail(nodes(path)) WHERE src=y)
 AND totalkm >= 5
+AND NONE (n IN nodes(path) WHERE n=nodePlaceD)
 RETURN path, totalkm
 ORDER BY totalkm ASC, length(path) DESC
 LIMIT 1
