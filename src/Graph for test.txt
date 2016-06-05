@@ -16,12 +16,21 @@ CREATE
 (F)-[:ROAD{km:1,cost:10}]->(C),(C)-[:ROAD{km:1,cost:10}]->(F)
 
 
-MATCH path = (src:Place { name:'PlaceA'})-[r:ROAD*1..100]-(src:Place { name:'PlaceA'})
-WHERE length(path)>=4
-AND
-	ALL(x IN tail(nodes(path)) 
-	WHERE SINGLE(y IN tail(nodes(path)) WHERE x=y))
-RETURN path,
-reduce(km=0, r in relationships(path) | km+r.km) AS totalkm
-ORDER BY totalkm ASC
+//cycle
+MATCH path = (src:Place { name:'PlaceA'})-[:ROAD*1..100]-(src:Place { name:'PlaceA'})
+WITH path, src, reduce(km=0, r in relationships(path) | km+r.km) AS totalkm
+WHERE ALL(x IN tail(nodes(path)) WHERE SINGLE(y IN tail(nodes(path)) WHERE x=y))
+AND totalkm >= 4
+RETURN path, totalkm
+ORDER BY totalkm ASC, length(path) DESC
 LIMIT 1
+
+//simplecycle
+MATCH path = (src:Place { name:'PlaceA'})-[:ROAD*1..100]-(src:Place { name:'PlaceA'})
+WITH path, src, reduce(km=0, r in relationships(path) | km+r.km) AS totalkm
+WHERE ALL(x IN tail(nodes(path)) WHERE SINGLE(y IN tail(nodes(path)) WHERE src=y))
+AND totalkm >= 8
+RETURN path, totalkm
+ORDER BY totalkm ASC, length(path) DESC
+LIMIT 1
+

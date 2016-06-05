@@ -63,13 +63,15 @@ public class Cycle extends Path {
 			//Dictate minimumlength
 			holder += "WHERE length(path)>="+minLength+"\n";
 			//Force single occurrence of every in-path node for ALL nodes
-			holder += "AND\n";
-			holder += "ALL(x IN tail(nodes(path)) \n";
+			holder += "AND ";
+			holder += "ALL(x IN tail(nodes(path)) ";
 			holder += "WHERE SINGLE(y IN tail(nodes(path)) WHERE x=y))\n";
 			// Return values
-			holder += "RETURN nodes(path),\n";
+			holder += "RETURN path,\n";
 			// Minimize length sing given attribute
-			holder += "length(path) AS length\n";
+			holder += "reduce(" + attributeFocus + "=0, r in relationships(path) | "
+				+ attributeFocus + "+r." + attributeFocus + ") AS total" + attributeFocus + "\n";
+			holder += "ORDER BY total" + attributeFocus + ASC"\n";
 			// Limiting result count
 			holder += "LIMIT 1\n";
 			
