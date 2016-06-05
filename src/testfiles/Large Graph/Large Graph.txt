@@ -13,26 +13,26 @@ CREATE
 
 
 //Inner Cross
-(A)-[:ROAD{km:1.4142,speed:30}]->(B),(B)-[:ROAD{km:1.4142,speed:30}]->(A),
-(A)-[:ROAD{km:1.4142,speed:30}]->(E),(E)-[:ROAD{km:1.4142,speed:30}]->(A),
-(A)-[:ROAD{km:1.4142,speed:30}]->(C),(C)-[:ROAD{km:1.4142,speed:30}]->(A),
-(A)-[:ROAD{km:1.4142,speed:30}]->(D),(D)-[:ROAD{km:1.4142,speed:30}]->(A),
+(A)-[:ROAD{km:1.4142,cost:0}]->(B),(B)-[:ROAD{km:1.4142,cost:0}]->(A),
+(A)-[:ROAD{km:1.4142,cost:0}]->(E),(E)-[:ROAD{km:1.4142,cost:0}]->(A),
+(A)-[:ROAD{km:1.4142,cost:0}]->(C),(C)-[:ROAD{km:1.4142,cost:0}]->(A),
+(A)-[:ROAD{km:1.4142,cost:0}]->(D),(D)-[:ROAD{km:1.4142,cost:0}]->(A),
 //Outter Cross
-(B)-[:ROAD{km:2,speed:30}]->(M),(M)-[:ROAD{km:2,speed:30}]->(B),
-(C)-[:ROAD{km:1.4142,speed:30}]->(G),(G)-[:ROAD{km:1.4142,speed:30}]->(C),
-(D)-[:ROAD{km:4,speed:30}]->(K),(K)-[:ROAD{km:4,speed:30}]->(D),
-(E)-[:ROAD{km:1.4142,speed:30}]->(I),(I)-[:ROAD{km:1.4142,speed:30}]->(E),
+(B)-[:ROAD{km:2,cost:0}]->(M),(M)-[:ROAD{km:2,cost:0}]->(B),
+(C)-[:ROAD{km:1.4142,cost:0}]->(G),(G)-[:ROAD{km:1.4142,cost:0}]->(C),
+(D)-[:ROAD{km:4,cost:0}]->(K),(K)-[:ROAD{km:4,cost:0}]->(D),
+(E)-[:ROAD{km:1.4142,cost:0}]->(I),(I)-[:ROAD{km:1.4142,cost:0}]->(E),
 //Outter Ring
-(M)-[:ROAD{km:3,speed:30}]->(F),(F)-[:ROAD{km:3,speed:30}]->(M),
-(F)-[:ROAD{km:1,speed:30}]->(G),(G)-[:ROAD{km:1,speed:30}]->(F),
-(G)-[:ROAD{km:1,speed:30}]->(H),(H)-[:ROAD{km:1,speed:30}]->(G),
-(H)-[:ROAD{km:1,speed:30}]->(I),(I)-[:ROAD{km:1,speed:30}]->(H),
-(I)-[:ROAD{km:5,speed:30}]->(J),(J)-[:ROAD{km:5,speed:30}]->(I),
-(J)-[:ROAD{km:1,speed:30}]->(K),(K)-[:ROAD{km:1,speed:30}]->(J),
-(K)-[:ROAD{km:1,speed:30}]->(L),(L)-[:ROAD{km:1,speed:30}]->(K),
-(L)-[:ROAD{km:1,speed:30}]->(M),(M)-[:ROAD{km:1,speed:30}]->(L),
+(M)-[:ROAD{km:3,cost:0}]->(F),(F)-[:ROAD{km:3,cost:0}]->(M),
+(F)-[:ROAD{km:1,cost:0}]->(G),(G)-[:ROAD{km:1,cost:0}]->(F),
+(G)-[:ROAD{km:1,cost:0}]->(H),(H)-[:ROAD{km:1,cost:0}]->(G),
+(H)-[:ROAD{km:1,cost:0}]->(I),(I)-[:ROAD{km:1,cost:0}]->(H),
+(I)-[:ROAD{km:5,cost:0}]->(J),(J)-[:ROAD{km:5,cost:0}]->(I),
+(J)-[:ROAD{km:1,cost:0}]->(K),(K)-[:ROAD{km:1,cost:0}]->(J),
+(K)-[:ROAD{km:1,cost:0}]->(L),(L)-[:ROAD{km:1,cost:0}]->(K),
+(L)-[:ROAD{km:1,cost:0}]->(M),(M)-[:ROAD{km:1,cost:0}]->(L),
 //Outskirts
-(F)-[:ROAD{km:2,speed:30}]->(N),(N)-[:ROAD{km:2,speed:30}]->(F),
-(N)-[:ROAD{km:3,speed:30}]->(Q),(Q)-[:ROAD{km:3,speed:30}]->(N),
-(J)-[:ROAD{km:2,speed:30}]->(O),(O)-[:ROAD{km:2,speed:30}]->(J),
-(O)-[:ROAD{km:3,speed:30}]->(P),(P)-[:ROAD{km:3,speed:30}]->(O)
+(F)-[:ROAD{km:2,cost:0}]->(N),(N)-[:ROAD{km:2,cost:0}]->(F),
+(N)-[:ROAD{km:3,cost:0}]->(Q),(Q)-[:ROAD{km:3,cost:0}]->(N),
+(J)-[:ROAD{km:2,cost:0}]->(O),(O)-[:ROAD{km:2,cost:0}]->(J),
+(O)-[:ROAD{km:3,cost:0}]->(P),(P)-[:ROAD{km:3,cost:0}]->(O)
